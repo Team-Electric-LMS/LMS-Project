@@ -1,3 +1,5 @@
 ﻿namespace LMS.Presentation;
 
-public class AssemblyReference { }
+public class AssemblyReference {
+    // TODO: learn what this is for
+}
