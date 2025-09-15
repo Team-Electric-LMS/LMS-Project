@@ -25,6 +25,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{6A65434E
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TEST1", "TEST1", "{C6D09DD6-9596-46CF-9B53-915FCE2B435E}"
 	ProjectSection(SolutionItems) = preProject
+		ronya test.txt = ronya test.txt
 		TextFile1.txt = TextFile1.txt
 	EndProjectSection
 EndProject
