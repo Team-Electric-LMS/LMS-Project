@@ -1,7 +1,8 @@
-﻿namespace WebApplication1
+﻿using System;
+
+namespace WebApplication1;
+
+public class TomasClass
 {
-    public class TomasClass
-    {
-        Console.WriteLine("Hello, World!");
-    }
+    Console.WriteLine("Hello, World!");
 }
