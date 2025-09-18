@@ -14,5 +14,10 @@ public class Course: Entity
 
     public ICollection<Module> Modules { get; set; } = new List<Module>();
     public ICollection<Document> Documents { get; set; } = new List<Document>();
+    public ICollection<ApplicationUser> Students { get; set; } = new List<ApplicationUser>();
+    public ICollection<ApplicationUser> Teachers { get; set; } = new List<ApplicationUser>();
+
+
+
 
 }
