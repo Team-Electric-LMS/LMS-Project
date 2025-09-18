@@ -1,8 +1,9 @@
-﻿using Bogus;
+﻿using System;
+using Bogus;
+using Domain.Models.Entities;
 using LMS.Infractructure.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System;
 
 namespace LMS.API.Services;
 
@@ -78,7 +79,6 @@ public class DataSeedHostingService : IHostedService
             Email = "teacher@test.com",
             FirstName="FN",
             LastName = "LN"
-
         };
         
         var student = new ApplicationUser
@@ -139,6 +139,49 @@ public class DataSeedHostingService : IHostedService
         }
     }
 
+/*static List<Document> GenerateDocuments(int nrOfDocuments, EntityEdu entity, ApplicationUser owner)
+        {
+
+            var documents = new List<Document>();
+
+            var documentTypes = new List<DocumentType>
+            {
+                new() { Id = Guid.NewGuid(), Name = "EvaluationCriteria" },
+                new() { Id = Guid.NewGuid(), Name = "CourseLiterature" },
+                new() { Id = Guid.NewGuid(), Name = "ProjectDescription" }
+            };
+
+            for (int i = 0; i < nrOfDocuments; i++)
+            {
+                var document = new Document
+                {
+                    Id = Guid.NewGuid(),
+                    Name = $"Document -  {entity.Name}",
+                    Description = $"Description for module of module {entity.Name}",
+                    Link = $"{entity.Name}.pdf",
+                    DocumentType = documentTypes[i],
+                    UploadedById = owner.Id
+                };
+
+                if (entity is Module)
+                {
+                    document.ModuleId = entity.Id;
+
+                }
+                else if (entity is Course)
+                {
+                    document.CourseId = entity.Id;
+
+                }
+                else if (entity is Activity)
+                {
+                    document.ActivityId = entity.Id;
+                };
+
+            documents.Add(document);
+            }
+            return documents;
+        } */
 
     private async Task AddDemoCoursesAsync(ApplicationDbContext context)
     {
@@ -156,11 +199,15 @@ public class DataSeedHostingService : IHostedService
         new() { Id = Guid.NewGuid(), Name = "Assignment" }
     };
 
+
         var courses = new List<Course>();
         var modules = new List<Module>();
         var activities = new List<Activity>();
+        //var demoDocuments = new List<Document>();
 
         var currentStart = new DateOnly(2025, 1, 20);
+
+        
 
         for (int c = 1; c <= 4; c++) 
         {
@@ -189,6 +236,12 @@ public class DataSeedHostingService : IHostedService
                 }
             }
 
+            /*demoDocuments = GenerateDocuments(1, course, teachers[0]);
+
+            foreach (Document doc in demoDocuments)
+            {
+                course.Documents.Add(doc);
+            } */
             courses.Add(course);
 
             for (int m = 1; m <= 3; m++) 
@@ -202,6 +255,13 @@ public class DataSeedHostingService : IHostedService
                     EndDate = currentStart.AddMonths(m),
                     CourseId = course.Id
                 };
+
+                /*demoDocuments = GenerateDocuments(3, module, teachers[0]);
+
+                foreach(Document doc in demoDocuments){
+                    module.Documents.Add(doc);
+                }
+                */
                 modules.Add(module);
 
                 foreach (var type in activityTypes)
@@ -216,8 +276,15 @@ public class DataSeedHostingService : IHostedService
                         ModuleId = module.Id,
                         ActivityTypeId = type.Id
                     };
-                    activities.Add(activity);
+                  //  demoDocuments = GenerateDocuments(2, activity, teachers[0]);
+
+                   // foreach (Document doc in demoDocuments)
+                    //{
+                   //     activity.Documents.Add(doc);
+                  //  }
+                 activities.Add(activity);
                 }
+
             }
 
             currentStart = course.EndDate.AddDays(10);
@@ -233,6 +300,8 @@ public class DataSeedHostingService : IHostedService
         foreach (var student in students)
             await userManager.UpdateAsync(student);
     }
+
+
 
     public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 

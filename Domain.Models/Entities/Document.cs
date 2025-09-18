@@ -10,6 +10,7 @@ public class Document : Entity
 {
     public string Name { get; set; } = null!;
     public string? Description { get; set; }
+    public string Link { get; set; } = null!;
     public DateOnly UploadDate { get; set; }
 
     public string UploadedById { get; set; } = null!;

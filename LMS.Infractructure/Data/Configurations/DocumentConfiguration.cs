@@ -20,6 +20,9 @@ public class DocumentConfiguration : IEntityTypeConfiguration<Document>
                .HasMaxLength(50
              );
 
+        builder.Property(c => c.Link)
+               .IsRequired();
+
         builder.Property(c => c.Description)
                .HasMaxLength(50);
 
