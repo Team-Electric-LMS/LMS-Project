@@ -2,6 +2,7 @@
 using LMS.Infractructure.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace LMS.API.Services;
 
@@ -47,6 +48,8 @@ public class DataSeedHostingService : IHostedService
             await AddRolesAsync([TeacherRole, StudentRole]);
             await AddDemoUsersAsync();
             await AddUsersAsync(20);
+            await AssignStudentsAsync(context);
+            await AddDemoCoursesAsync(context);
             logger.LogInformation("Seed complete");
         }
         catch (Exception ex)
@@ -72,13 +75,18 @@ public class DataSeedHostingService : IHostedService
         var teacher = new ApplicationUser
         {
             UserName = "teacher@test.com",
-            Email = "teacher@test.com"
+            Email = "teacher@test.com",
+            FirstName="FN",
+            LastName = "LN"
+
         };
         
         var student = new ApplicationUser
         {
             UserName = "student@test.com",
-            Email = "student@test.com"
+            Email = "student@test.com",
+            FirstName = "FN",
+            LastName = "LN"
         };
 
         await AddUserToDb([teacher, student]);
@@ -96,6 +104,8 @@ public class DataSeedHostingService : IHostedService
         {
             e.Email = f.Person.Email;
             e.UserName = f.Person.Email;
+            e.FirstName = f.Person.FirstName;
+            e.LastName = f.Person.LastName;
         });
 
         await AddUserToDb(faker.Generate(nrOfUsers));
@@ -112,6 +122,118 @@ public class DataSeedHostingService : IHostedService
             if (!result.Succeeded) throw new Exception(string.Join("\n", result.Errors));
         }
     }
+
+    private async Task AssignStudentsAsync(ApplicationDbContext context)
+    {
+        var allUsers = userManager.Users.ToList();
+
+        foreach (var user in allUsers)
+        {
+            var roles = await userManager.GetRolesAsync(user);
+            if (!roles.Contains("Student"))
+            {
+                await userManager.AddToRoleAsync(user, "Student");
+            }
+
+            await userManager.UpdateAsync(user);
+        }
+    }
+
+
+    private async Task AddDemoCoursesAsync(ApplicationDbContext context)
+    {
+        if (await context.Courses.AnyAsync()) return;
+
+        var teachers = await userManager.GetUsersInRoleAsync("Teacher");
+        var students = await userManager.GetUsersInRoleAsync("Student");
+        var allUsers = userManager.Users.ToList();
+        var random = new Random();
+
+        var activityTypes = new List<ActivityType>
+    {
+        new() { Id = Guid.NewGuid(), Name = "Seminar" },
+        new() { Id = Guid.NewGuid(), Name = "Workshop" },
+        new() { Id = Guid.NewGuid(), Name = "Assignment" }
+    };
+
+        var courses = new List<Course>();
+        var modules = new List<Module>();
+        var activities = new List<Activity>();
+
+        var currentStart = new DateOnly(2025, 1, 20);
+
+        for (int c = 1; c <= 2; c++) 
+        {
+            var course = new Course
+            {
+                Id = Guid.NewGuid(),
+                Name = $"Demo Course {c}",
+                Description = $"Description for course {c}",
+                StartDate = currentStart,
+                EndDate = currentStart.AddMonths(4)
+            };
+
+            if (teachers.Any())
+            {
+                var teacher = teachers[random.Next(teachers.Count)];
+                course.Teachers.Add(teacher);
+            }
+
+            if (students.Any())
+            {
+                var assignedStudents = students.OrderBy(x => random.Next()).Take(3).ToList();
+                foreach (var student in assignedStudents)
+                {
+                    student.CourseId = course.Id;
+                    course.Students.Add(student);
+                }
+            }
+
+            courses.Add(course);
+
+            for (int m = 1; m <= 2; m++) 
+            {
+                var module = new Module
+                {
+                    Id = Guid.NewGuid(),
+                    Name = $"Module {m} - Course {c}",
+                    Description = $"Description for module {m} of course {c}",
+                    StartDate = currentStart.AddMonths(m - 1),
+                    EndDate = currentStart.AddMonths(m),
+                    CourseId = course.Id
+                };
+                modules.Add(module);
+
+                foreach (var type in activityTypes)
+                {
+                    var activity = new Activity
+                    {
+                        Id = Guid.NewGuid(),
+                        Name = $"{type.Name} Activity - Module {m}",
+                        Description = $"Demo {type.Name} for module {m} in course {c}",
+                        StartDate = module.StartDate.AddDays(1),
+                        EndDate = module.StartDate.AddDays(2),
+                        ModuleId = module.Id,
+                        ActivityTypeId = type.Id
+                    };
+                    activities.Add(activity);
+                }
+            }
+
+            currentStart = course.EndDate.AddDays(10);
+        }
+
+        await context.AddRangeAsync(activityTypes);
+        await context.AddRangeAsync(courses);
+        await context.AddRangeAsync(modules);
+        await context.AddRangeAsync(activities);
+
+        await context.SaveChangesAsync();
+
+        foreach (var student in students)
+            await userManager.UpdateAsync(student);
+    }
+
     public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 
 }
