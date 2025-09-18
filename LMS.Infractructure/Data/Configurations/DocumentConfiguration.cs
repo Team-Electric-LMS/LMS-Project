@@ -15,6 +15,14 @@ public class DocumentConfiguration : IEntityTypeConfiguration<Document>
         builder.ToTable("Documents");
         builder.HasKey(d => d.Id);
 
+        builder.Property(c => c.Name)
+               .IsRequired()
+               .HasMaxLength(50
+             );
+
+        builder.Property(c => c.Description)
+               .HasMaxLength(50);
+
         builder.HasOne(d => d.Course)
                .WithMany(c => c.Documents)
                .HasForeignKey(d => d.CourseId)

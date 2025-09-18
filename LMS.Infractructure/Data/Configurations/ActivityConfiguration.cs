@@ -10,6 +10,11 @@ public class ActivityConfiguration : IEntityTypeConfiguration<Activity>
         builder.ToTable("Activities");
         builder.HasKey(a => a.Id);
 
+        builder.Property(c => c.Name)
+               .IsRequired()
+               .HasMaxLength(50
+             );
+
         builder.HasOne(a => a.Module)
                .WithMany(m => m.Activities)
                .HasForeignKey(a => a.ModuleId);
