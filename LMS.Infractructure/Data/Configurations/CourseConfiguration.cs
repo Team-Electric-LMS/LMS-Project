@@ -18,5 +18,17 @@ public class CourseConfiguration: IEntityTypeConfiguration<Course>
         builder.HasMany(c => c.Documents)
                .WithOne(d => d.Course)
                .HasForeignKey(d => d.CourseId);
+
+        builder.HasMany(c => c.Students)
+               .WithOne(s => s.Course)
+               .HasForeignKey(s => s.CourseId)
+               .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasMany(c => c.Teachers)
+               .WithMany(t => t.CoursesTaught) 
+               .UsingEntity(j => j.ToTable("CourseTeachers")); 
+
+
+
     }
 }
