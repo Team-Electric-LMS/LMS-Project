@@ -130,7 +130,7 @@ public class DataSeedHostingService : IHostedService
         foreach (var user in allUsers)
         {
             var roles = await userManager.GetRolesAsync(user);
-            if (!roles.Contains("Student"))
+            if (!roles.Contains("Teacher") && !roles.Contains("Student"))
             {
                 await userManager.AddToRoleAsync(user, "Student");
             }
@@ -139,49 +139,50 @@ public class DataSeedHostingService : IHostedService
         }
     }
 
-/*static List<Document> GenerateDocuments(int nrOfDocuments, EntityEdu entity, ApplicationUser owner)
+static List<Document> GenerateDocuments(int nrOfDocuments, List<DocumentType> documentTypes, EntityEdu entity, ApplicationUser owner)
         {
 
             var documents = new List<Document>();
-
-            var documentTypes = new List<DocumentType>
-            {
-                new() { Id = Guid.NewGuid(), Name = "EvaluationCriteria" },
-                new() { Id = Guid.NewGuid(), Name = "CourseLiterature" },
-                new() { Id = Guid.NewGuid(), Name = "ProjectDescription" }
-            };
+            var random = new Random();
 
             for (int i = 0; i < nrOfDocuments; i++)
             {
                 var document = new Document
                 {
                     Id = Guid.NewGuid(),
-                    Name = $"Document -  {entity.Name}",
-                    Description = $"Description for module of module {entity.Name}",
-                    Link = $"{entity.Name}.pdf",
-                    DocumentType = documentTypes[i],
+                    Name = $"Doc - {entity.Name}",
+                    Description = $"Description for {entity.Name}",
+                    Link = $"{entity.Name.Replace(" ", "")}_doc.pdf",
+                    DocumentTypeId = documentTypes[random.Next(documentTypes.Count)].Id,
                     UploadedById = owner.Id
                 };
 
                 if (entity is Module)
                 {
                     document.ModuleId = entity.Id;
+                    document.CourseId = null;
+                    document.ActivityId = null;
 
-                }
+            }
                 else if (entity is Course)
                 {
                     document.CourseId = entity.Id;
+                    document.ModuleId = null;
+                    document.ActivityId = null;
 
-                }
+            }
                 else if (entity is Activity)
                 {
                     document.ActivityId = entity.Id;
-                };
+                    document.ModuleId = null;
+                    document.CourseId = null;
+            }
+            ;
 
             documents.Add(document);
             }
             return documents;
-        } */
+        } 
 
     private async Task AddDemoCoursesAsync(ApplicationDbContext context)
     {
@@ -189,7 +190,6 @@ public class DataSeedHostingService : IHostedService
 
         var teachers = await userManager.GetUsersInRoleAsync("Teacher");
         var students = await userManager.GetUsersInRoleAsync("Student");
-        var allUsers = userManager.Users.ToList();
         var random = new Random();
 
         var activityTypes = new List<ActivityType>
@@ -198,17 +198,21 @@ public class DataSeedHostingService : IHostedService
         new() { Id = Guid.NewGuid(), Name = "Workshop" },
         new() { Id = Guid.NewGuid(), Name = "Assignment" }
     };
-
+        var documentTypes = new List<DocumentType>
+    {
+        new() { Id = Guid.NewGuid(), Name = "EvaluationCriteria" },
+        new() { Id = Guid.NewGuid(), Name = "CourseLiterature" },
+        new() { Id = Guid.NewGuid(), Name = "ProjectDescription" }
+    };
 
         var courses = new List<Course>();
         var modules = new List<Module>();
         var activities = new List<Activity>();
-        //var demoDocuments = new List<Document>();
+        var documents = new List<Document>();
 
         var currentStart = new DateOnly(2025, 1, 20);
 
-        
-
+        // Seed courses
         for (int c = 1; c <= 4; c++) 
         {
             var course = new Course
@@ -236,14 +240,11 @@ public class DataSeedHostingService : IHostedService
                 }
             }
 
-            /*demoDocuments = GenerateDocuments(1, course, teachers[0]);
+            documents.AddRange(GenerateDocuments(3, documentTypes, course, teachers[0]));
 
-            foreach (Document doc in demoDocuments)
-            {
-                course.Documents.Add(doc);
-            } */
             courses.Add(course);
 
+            // Seed modules
             for (int m = 1; m <= 3; m++) 
             {
                 var module = new Module
@@ -256,44 +257,41 @@ public class DataSeedHostingService : IHostedService
                     CourseId = course.Id
                 };
 
-                /*demoDocuments = GenerateDocuments(3, module, teachers[0]);
+                documents.AddRange(GenerateDocuments(2, documentTypes, module, teachers[0]));
 
-                foreach(Document doc in demoDocuments){
-                    module.Documents.Add(doc);
-                }
-                */
                 modules.Add(module);
 
-                foreach (var type in activityTypes)
+                // Seed activities
+                for (int a = 1; a <= 3; a++) 
                 {
+                    var type = activityTypes[random.Next(activityTypes.Count)];
+
                     var activity = new Activity
                     {
                         Id = Guid.NewGuid(),
-                        Name = $"{type.Name} Activity - Module {m}",
-                        Description = $"Demo {type.Name} for module {m} in course {c}",
-                        StartDate = module.StartDate.AddDays(1),
-                        EndDate = module.StartDate.AddDays(2),
+                        Name = $"{type.Name} Activity {a}",
+                        Description = $"Demo {type.Name} for module {m}. course {c}",
+                        StartDate = module.StartDate.AddDays(a), 
+                        EndDate = module.StartDate.AddDays(a + 1),
                         ModuleId = module.Id,
                         ActivityTypeId = type.Id
                     };
-                  //  demoDocuments = GenerateDocuments(2, activity, teachers[0]);
 
-                   // foreach (Document doc in demoDocuments)
-                    //{
-                   //     activity.Documents.Add(doc);
-                  //  }
-                 activities.Add(activity);
+                    documents.AddRange(GenerateDocuments(random.Next(1, 3), documentTypes, activity, teachers[0]));
+
+                    activities.Add(activity);
                 }
 
             }
 
             currentStart = course.EndDate.AddDays(10);
         }
-
         await context.AddRangeAsync(activityTypes);
+        await context.AddRangeAsync(documentTypes);
         await context.AddRangeAsync(courses);
         await context.AddRangeAsync(modules);
         await context.AddRangeAsync(activities);
+        await context.AddRangeAsync(documents);
 
         await context.SaveChangesAsync();
 

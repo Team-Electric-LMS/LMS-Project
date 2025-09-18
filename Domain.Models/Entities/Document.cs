@@ -16,15 +16,15 @@ public class Document : Entity
     public string UploadedById { get; set; } = null!;
     public ApplicationUser UploadedBy { get; set; } = null!;
 
-    public Guid DocumentTypeId { get; set; }
-    public DocumentType DocumentType { get; set; } = null!;
+    public Guid? DocumentTypeId { get; set; }
+    public DocumentType? DocumentType { get; set; } = null!;
 
-    public Guid CourseId { get; set; }
-    public Course Course { get; set; } = null!;
+    public Guid? CourseId { get; set; }
+    public Course? Course { get; set; } = null!;
 
-    public Guid ModuleId { get; set; }
-    public Module Module { get; set; } = null!;
+    public Guid? ModuleId { get; set; }
+    public Module? Module { get; set; } = null!;
 
-    public Guid ActivityId { get; set; }
-    public Activity Activity { get; set; } = null!;
+    public Guid? ActivityId { get; set; }
+    public Activity? Activity { get; set; } = null!;
 }
