@@ -162,7 +162,7 @@ public class DataSeedHostingService : IHostedService
 
         var currentStart = new DateOnly(2025, 1, 20);
 
-        for (int c = 1; c <= 2; c++) 
+        for (int c = 1; c <= 4; c++) 
         {
             var course = new Course
             {
@@ -181,7 +181,7 @@ public class DataSeedHostingService : IHostedService
 
             if (students.Any())
             {
-                var assignedStudents = students.OrderBy(x => random.Next()).Take(3).ToList();
+                var assignedStudents = students.OrderBy(x => random.Next()).Take(20).ToList();
                 foreach (var student in assignedStudents)
                 {
                     student.CourseId = course.Id;
@@ -191,7 +191,7 @@ public class DataSeedHostingService : IHostedService
 
             courses.Add(course);
 
-            for (int m = 1; m <= 2; m++) 
+            for (int m = 1; m <= 3; m++) 
             {
                 var module = new Module
                 {
