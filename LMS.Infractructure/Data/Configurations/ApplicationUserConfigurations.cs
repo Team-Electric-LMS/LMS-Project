@@ -10,5 +10,23 @@ public class ApplicationUserConfigurations : IEntityTypeConfiguration<Applicatio
     {
         builder.ToTable("ApplicationUser");
         //Add more configurations here
+
+        builder.Property(c => c.UserName)
+               .IsRequired()
+               .HasMaxLength(50
+             );
+        builder.Property(c => c.FirstName)
+               .IsRequired()
+               .HasMaxLength(50
+             );
+        builder.Property(c => c.LastName)
+               .IsRequired()
+               .HasMaxLength(50
+             );
+
+        builder.HasOne(u => u.Course)
+       .WithMany(c => c.Students)
+       .HasForeignKey(u => u.CourseId)
+       .OnDelete(DeleteBehavior.Restrict);
     }
 }
