@@ -1,5 +1,4 @@
 namespace LMS.Shared.DTOs;
-
 public class CourseDto
 {
     public Guid Id { get; set; }
