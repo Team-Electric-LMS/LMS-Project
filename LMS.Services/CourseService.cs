@@ -1,18 +1,16 @@
 using LMS.Shared.DTOs;
 using Service.Contracts;
-using LMS.Infractructure.Data;
-using Microsoft.EntityFrameworkCore;
 using Domain.Models.Entities;
 
 namespace LMS.Services;
 
 public class CourseService : ICourseService
 {
-    private readonly ApplicationDbContext _context;
+    private readonly ICourseRepository _courseRepository;
 
-    public CourseService(ApplicationDbContext context)
+    public CourseService(ICourseRepository courseRepository)
     {
-        _context = context;
+        _courseRepository = courseRepository;
     }
     // Fetch courses by teacher ID
     public async Task<IEnumerable<CourseDto>> GetCoursesByTeacherAsync(Guid teacherId)
@@ -22,17 +20,13 @@ public class CourseService : ICourseService
         // Ensure teacher exists, otherwise return null
         try
         {
-            var courses = await _context.Courses
-                .Where(course => course.Teachers.Any(teacher => teacher.Id == teacherId.ToString()))
-                .Select(course => new CourseDto
-                {
-                    Id = course.Id,
-                    Name = course.Name ?? string.Empty,
-                    TeacherId = teacherId
-                })
-                .ToListAsync();
-
-            return courses;
+            var courses = await _courseRepository.GetCoursesByTeacherAsync(teacherId);
+            return courses.Select(course => new CourseDto
+            {
+                Id = course.Id,
+                Name = course.Name ?? string.Empty,
+                TeacherId = teacherId
+            });
         }
         catch (Exception ex)
         {
