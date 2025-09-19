@@ -14,28 +14,29 @@ public class CourseService : ICourseService
     {
         _context = context;
     }
-
+    // Fetch courses by teacher ID
     public async Task<IEnumerable<CourseDto>> GetCoursesByTeacherAsync(Guid teacherId)
     {
         if (teacherId == Guid.Empty)
             throw new ArgumentException("Invalid teacher ID.");
+        // Ensure teacher exists, otherwise return null
         try
         {
             var courses = await _context.Courses
-                .Where(c => c.Teachers.Any(t => t.Id == teacherId.ToString()))
-                .Select(c => new CourseDto
+                .Where(course => course.Teachers.Any(teacher => teacher.Id == teacherId.ToString()))
+                .Select(course => new CourseDto
                 {
-                    Id = c.Id,
-                    Name = c.Name,
+                    Id = course.Id,
+                    Name = course.Name ?? string.Empty,
                     TeacherId = teacherId
                 })
                 .ToListAsync();
 
-            return courses ?? new List<CourseDto>();
+            return courses;
         }
         catch (Exception ex)
         {
-            // Log the exception (inject ILogger<CourseService> and use it here)
+            // Log exceptions
             throw new ApplicationException("An error occurred while fetching courses.", ex);
         }
     }
