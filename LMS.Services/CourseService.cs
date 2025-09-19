@@ -3,7 +3,7 @@ using Service.Contracts;
 using Domain.Models.Entities;
 
 namespace LMS.Services;
-
+// Service for managing course-related operations
 public class CourseService : ICourseService
 {
     private readonly IUnitOfWork _unitOfWork;

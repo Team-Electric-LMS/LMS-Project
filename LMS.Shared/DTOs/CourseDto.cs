@@ -1,4 +1,5 @@
 namespace LMS.Shared.DTOs;
+// Data Transfer Object for Course entity
 public class CourseDto
 {
     public Guid Id { get; set; }

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LMS.Services
 {
+    // Repository for managing Course entities.
     public class CourseRepository : ICourseRepository
     {
         private readonly ApplicationDbContext _context;
