@@ -6,11 +6,11 @@ namespace LMS.Services;
 
 public class CourseService : ICourseService
 {
-    private readonly ICourseRepository _courseRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public CourseService(ICourseRepository courseRepository)
+    public CourseService(IUnitOfWork unitOfWork)
     {
-        _courseRepository = courseRepository;
+        _unitOfWork = unitOfWork;
     }
     // Fetch courses by teacher ID
     public async Task<IEnumerable<CourseDto>> GetCoursesByTeacherAsync(Guid teacherId)
@@ -20,7 +20,7 @@ public class CourseService : ICourseService
         // Ensure teacher exists, otherwise return null
         try
         {
-            var courses = await _courseRepository.GetCoursesByTeacherAsync(teacherId);
+            var courses = await _unitOfWork.Courses.GetCoursesByTeacherAsync(teacherId);
             return courses.Select(course => new CourseDto
             {
                 Id = course.Id,

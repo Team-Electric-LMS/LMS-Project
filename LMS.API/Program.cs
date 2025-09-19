@@ -1,6 +1,8 @@
 using LMS.API.Extensions;
 using LMS.API.Services;
 using LMS.Infractructure.Data;
+using LMS.Services;
+using Service.Contracts;
 
 namespace LMS.API;
 
@@ -23,10 +25,13 @@ public class Program
         builder.Services.AddAutoMapper(cfg => cfg.AddProfile<MapperProfile>());
         builder.Services.ConfigureCors();
         builder.Services.ConfigureOpenApi();
-       
+        
+        // Register UnitOfWork, CourseRepository, and CourseService for DI
+        builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+        builder.Services.AddScoped<ICourseRepository, CourseRepository>();
+        builder.Services.AddScoped<ICourseService, CourseService>();
 
         var app = builder.Build();
-
 
         // Configure the HTTP request pipeline.
         app.ConfigureExceptionHandler();
