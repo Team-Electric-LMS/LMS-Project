@@ -4,22 +4,20 @@ using Microsoft.AspNetCore.Mvc;
 using Service.Contracts;
 
 namespace LMS.Presentation.Controllers;
-
+// Controller for managing teacher-related endpoints
 [ApiController]
 [Route("api/teachers")]
 public class TeachersController : ControllerBase
 {
     private readonly ICourseService _courseService;
-
     public TeachersController(ICourseService courseService)
     {
         _courseService = courseService;
     }
-
+    // GET: api/teachers/{teacherId}/courses
     [HttpGet("{teacherId}/courses")]
-    // TODO FRONTEND: frontend must send the token in the Authorization: Bearer <token> header.
-    // Only authenticated users with the Teacher role
-    [Authorize(Roles = "Teacher")] 
+    [Authorize(Roles = "Teacher")]
+    // Fetch courses for a specific teacher by their ID
     public async Task<IActionResult> GetCoursesForTeacher(Guid teacherId)
     {
         try

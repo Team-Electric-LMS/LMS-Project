@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 
 namespace LMS.Services
 {
+    // Implements the Unit of Work pattern to manage repositories and database transactions.
     public class UnitOfWork : IUnitOfWork
     {
         private readonly ApplicationDbContext _context;
