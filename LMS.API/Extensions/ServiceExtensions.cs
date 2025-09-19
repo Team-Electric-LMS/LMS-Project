@@ -5,6 +5,7 @@ using LMS.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Service.Contracts;
 
 namespace LMS.API.Extensions;
 
@@ -90,5 +91,8 @@ public static class ServiceExtensions
 
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped(provider => new Lazy<IAuthService>(() => provider.GetRequiredService<IAuthService>()));
+
+        services.AddScoped<IStudentService, StudentService>();
+        services.AddScoped(provider => new Lazy<IStudentService>(() => provider.GetRequiredService<IStudentService>()));
     }
 }
