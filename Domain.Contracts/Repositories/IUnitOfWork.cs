@@ -2,5 +2,6 @@
 
 public interface IUnitOfWork
 {
+    IUserRepository UserRepository { get; }
     Task CompleteAsync();
 }

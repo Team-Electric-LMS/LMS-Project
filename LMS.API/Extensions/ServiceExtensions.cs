@@ -82,6 +82,8 @@ public static class ServiceExtensions
     public static void AddRepositories(this IServiceCollection services)
     {
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped(provider => new Lazy<IUserRepository>(() => provider.GetRequiredService<IUserRepository>()));
     }
 
     public static void AddServiceLayer(this IServiceCollection services)
@@ -90,5 +92,7 @@ public static class ServiceExtensions
 
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped(provider => new Lazy<IAuthService>(() => provider.GetRequiredService<IAuthService>()));
+        services.AddScoped<IUserService, UserService>();
+        services.AddScoped(provider => new Lazy<IUserService>(() => provider.GetRequiredService<IUserService>()));
     }
 }
