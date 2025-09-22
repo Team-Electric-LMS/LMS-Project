@@ -4,11 +4,15 @@ namespace LMS.Services;
 
 public class ServiceManager : IServiceManager
 {
-    private Lazy<IAuthService> authService;
-    public IAuthService AuthService => authService.Value;
+    private readonly Lazy<IAuthService> authService;
+    private readonly Lazy<ICourseService> courseService;
 
-    public ServiceManager(Lazy<IAuthService> authService)
+    public IAuthService AuthService => authService.Value;
+    public ICourseService CourseService => courseService.Value;
+
+    public ServiceManager(Lazy<IAuthService> authService, Lazy<ICourseService> courseService)
     {
         this.authService = authService;
+        this.courseService = courseService;
     }
 }
