@@ -1,14 +1,8 @@
-using System;
-
-namespace LMS.Shared.Dtos
+namespace LMS.Shared.DTOs;
+// Data Transfer Object for Course entity
+public class CourseDto
 {
-    /// <summary>
-    /// Data transfer object for a course entity.
-    /// </summary>
-    public class CourseDto
-    {
-        public Guid Id { get; set; }
-        public string? Name { get; set; }
-        public string? Description { get; set; }
-    }
+    public Guid Id { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public Guid TeacherId { get; set; }
 }

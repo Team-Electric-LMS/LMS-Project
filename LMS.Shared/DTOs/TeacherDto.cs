@@ -1,12 +1,8 @@
-namespace LMS.Shared.Dtos
+namespace LMS.Shared.DTOs;
+
+public class TeacherDto
 {
-    /// <summary>
-    /// Data transfer object for a teacher (ApplicationUser) entity.
-    /// </summary>
-    public class TeacherDto
-    {
-        public string Id { get; set; } = string.Empty;
-        public string? UserName { get; set; }
-        public string? Email { get; set; }
-    }
+    public Guid Id { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
 }

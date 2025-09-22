@@ -1,15 +1,21 @@
-﻿using Domain.Contracts.Repositories;
+using Domain.Contracts.Repositories;
 using LMS.Infractructure.Data;
 
 namespace LMS.Infractructure.Repositories;
 public class UnitOfWork : IUnitOfWork
 {
     private readonly ApplicationDbContext context;
+    private readonly Lazy<IUserRepository> userRepository;
+    private readonly Lazy<ICourseRepository> courseRepository;
+    public IUserRepository UserRepository => userRepository.Value;
+    public ICourseRepository CourseRepository => courseRepository.Value;
+    public ICourseRepository Courses => courseRepository.Value; 
 
-    public UnitOfWork(ApplicationDbContext context)
+    public UnitOfWork(ApplicationDbContext context, Lazy<IUserRepository> userRepository, Lazy<ICourseRepository> courseRepository)
     {
         this.context = context ?? throw new ArgumentNullException(nameof(context));
+        this.userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+        this.courseRepository = courseRepository ?? throw new ArgumentNullException(nameof(courseRepository));
     }
-
     public async Task CompleteAsync() => await context.SaveChangesAsync();
 }
