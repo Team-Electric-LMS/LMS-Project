@@ -1,10 +1,13 @@
 ﻿using LMS.Shared.DTOs.AuthDtos;
+using LMS.Shared.DTOs.CourseDTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Service.Contracts;
 using Swashbuckle.AspNetCore.Annotations;
+using System.Security.Claims;
 
 namespace LMS.Presentation.Controllers;
 
@@ -48,4 +51,32 @@ public class AuthController : ControllerBase
         var tokenDto = await serviceManager.AuthService.CreateTokenAsync(addTime: true);
         return Ok(tokenDto);
     }
+
+    [HttpGet("user")]
+    [Authorize]
+    [SwaggerOperation(
+        Summary = "Return Users Id, email, Name via User claims",
+        Description = "Returns claims for UI experience and routing"
+    )]
+    [SwaggerResponse(StatusCodes.Status200OK, "Claims received", typeof(TokenDto))]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized, "No Access")]
+    public async Task<IActionResult> GetCurrent()
+    {
+        /*var claimsInfo = User.Claims.Select(c => new
+        {
+            Type = c.Type,
+            Value = c.Value
+        }).ToList(); */
+
+        var claims = new
+        {
+            Id = User.FindFirst(ClaimTypes.NameIdentifier)?.Value,
+            Email = User.FindFirst(ClaimTypes.Name)?.Value,
+            Role = User.FindFirst(ClaimTypes.Role)?.Value,
+        };
+
+        return Ok(claims);
+    }
+
+
 }

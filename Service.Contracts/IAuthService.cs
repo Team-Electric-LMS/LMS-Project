@@ -1,5 +1,6 @@
 ﻿using LMS.Shared.DTOs.AuthDtos;
 using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 
 namespace Service.Contracts;
 public interface IAuthService
