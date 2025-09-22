@@ -1,6 +1,7 @@
+using Domain.Contracts.Repositories;
+using Microsoft.EntityFrameworkCore;
 using Domain.Models.Entities;
 using LMS.Infractructure.Data;
-using Microsoft.EntityFrameworkCore;
 
 namespace LMS.Services
 {

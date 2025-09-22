@@ -1,6 +1,7 @@
 using LMS.Shared.DTOs;
 using Service.Contracts;
 using Domain.Models.Entities;
+using Domain.Contracts.Repositories;
 
 namespace LMS.Services;
 // Service for managing course-related operations
