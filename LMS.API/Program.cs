@@ -27,12 +27,8 @@ public class Program
         builder.Services.ConfigureCors();
         builder.Services.ConfigureOpenApi();
 
-        // Register UnitOfWork, CourseRepository, CourseService, and ServiceManager for DI
-        builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+        // Register CourseService and CourseRepository
         builder.Services.AddScoped<ICourseRepository, CourseRepository>();
-        builder.Services.AddScoped<ICourseService, CourseService>();
-        builder.Services.AddScoped<IServiceManager, ServiceManager>();
-        builder.Services.AddScoped(provider => new Lazy<IAuthService>(() => provider.GetRequiredService<IAuthService>()));
         builder.Services.AddScoped(provider => new Lazy<ICourseService>(() => provider.GetRequiredService<ICourseService>()));
 
         var app = builder.Build();
