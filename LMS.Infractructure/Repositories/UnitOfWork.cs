@@ -9,12 +9,13 @@ public class UnitOfWork : IUnitOfWork
     private readonly Lazy<ICourseRepository> courseRepository;
     public IUserRepository UserRepository => userRepository.Value;
     public ICourseRepository CourseRepository => courseRepository.Value;
+    public ICourseRepository Courses => courseRepository.Value; 
 
     public UnitOfWork(ApplicationDbContext context, Lazy<IUserRepository> userRepository, Lazy<ICourseRepository> courseRepository)
     {
-        _context = context ?? throw new ArgumentNullException(nameof(context));
-        _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-        _courseRepository = courseRepository ?? throw new ArgumentNullException(nameof(courseRepository));
+        this.context = context ?? throw new ArgumentNullException(nameof(context));
+        this.userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+        this.courseRepository = courseRepository ?? throw new ArgumentNullException(nameof(courseRepository));
     }
     public async Task CompleteAsync() => await context.SaveChangesAsync();
 }
