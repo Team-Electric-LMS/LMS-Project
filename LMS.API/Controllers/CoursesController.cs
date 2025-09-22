@@ -4,7 +4,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using LMS.Infractructure.Data; // Adjust namespace if your project uses LMS.Infrastructure
-using LMS.Shared.Dtos;
+using LMS.Shared.DTOs;
 
 namespace LMS.API.Controllers
 {

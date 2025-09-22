@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using Domain.Models.Entities;
-using LMS.Shared.Dtos;
+using LMS.Shared.DTOs;
 
 namespace LMS.API.Controllers
 {

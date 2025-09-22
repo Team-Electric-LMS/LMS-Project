@@ -1,6 +1,6 @@
 using System;
 
-namespace LMS.Shared.Dtos
+namespace LMS.Shared.DTOs
 {
     /// <summary>
     /// Data transfer object for a module entity.
