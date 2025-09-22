@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Domain.Models.Entities;
 using LMS.Infractructure.Data;
 
-namespace LMS.Services
+namespace LMS.Infractructure.Repositories
 {
     // Repository for managing Course entities.
     public class CourseRepository : ICourseRepository
