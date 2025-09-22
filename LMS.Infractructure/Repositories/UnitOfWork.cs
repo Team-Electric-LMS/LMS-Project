@@ -10,10 +10,8 @@ public class UnitOfWork : IUnitOfWork
     public UnitOfWork(ApplicationDbContext context, ICourseRepository courseRepository)
     {
         this.context = context ?? throw new ArgumentNullException(nameof(context));
-        Courses = courseRepository;
+        Courses = courseRepository ?? throw new ArgumentNullException(nameof(courseRepository));
     }
-
-    public async Task<int> SaveChangesAsync() => await context.SaveChangesAsync();
 
     public async Task CompleteAsync() => await context.SaveChangesAsync();
 }
