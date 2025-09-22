@@ -1,6 +1,7 @@
 using LMS.API.Extensions;
 using LMS.API.Services;
 using LMS.Infractructure.Data;
+using LMS.Infractructure.Repositories;
 using LMS.Services;
 using Service.Contracts;
 
@@ -27,7 +28,7 @@ public class Program
         builder.Services.ConfigureOpenApi();
 
         // Register UnitOfWork, CourseRepository, and CourseService for DI
-        builder.Services.AddScoped<LMS.Services.IUnitOfWork, LMS.Services.UnitOfWork>();
+        builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
         builder.Services.AddScoped<ICourseRepository, CourseRepository>();
         builder.Services.AddScoped<ICourseService, CourseService>();
 

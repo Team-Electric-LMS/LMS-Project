@@ -1,8 +1,10 @@
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Domain.Models.Entities;
 
-namespace LMS.Services
+namespace Domain.Contracts.Repositories
 {
-    // Repository interface for managing Course entities.
     public interface ICourseRepository
     {
         Task<IEnumerable<Course>> GetCoursesByTeacherAsync(Guid teacherId);
