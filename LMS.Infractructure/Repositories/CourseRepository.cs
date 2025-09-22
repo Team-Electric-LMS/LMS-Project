@@ -1,24 +1,38 @@
 using Domain.Contracts.Repositories;
-using Microsoft.EntityFrameworkCore;
 using Domain.Models.Entities;
+using Microsoft.EntityFrameworkCore;
 using LMS.Infractructure.Data;
 
 namespace LMS.Infractructure.Repositories
 {
-    // Repository for managing Course entities.
+    // Course repository implementation
     public class CourseRepository : ICourseRepository
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ApplicationDbContext context;
         public CourseRepository(ApplicationDbContext context)
         {
-            _context = context;
+            this.context = context;
         }
-
+        // Get all courses
         public async Task<IEnumerable<Course>> GetCoursesByTeacherAsync(Guid teacherId)
         {
-            return await _context.Courses
+            return await context.Courses
                 .Where(course => course.Teachers.Any(teacher => teacher.Id == teacherId.ToString()))
                 .ToListAsync();
+        }
+        // Get course by id with related entities
+        public async Task<Course?> GetCourseByIdAsync(Guid id, bool trackChanges = false)
+        {
+            var query = context.Courses.AsQueryable();
+            if (!trackChanges)
+                query = query.AsNoTracking();
+
+            return await query
+                .Include(c => c.Modules)
+                .Include(c => c.Documents)
+                .Include(c => c.Students)
+                .Include(c => c.Teachers)
+                .FirstOrDefaultAsync(c => c.Id == id);
         }
     }
 }
