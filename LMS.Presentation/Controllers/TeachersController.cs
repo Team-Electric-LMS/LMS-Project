@@ -4,15 +4,17 @@ using Microsoft.AspNetCore.Mvc;
 using Service.Contracts;
 
 namespace LMS.Presentation.Controllers;
+
 // Controller for managing teacher-related endpoints
 [ApiController]
 [Route("api/teachers")]
 public class TeachersController : ControllerBase
 {
-    private readonly ICourseService _courseService;
-    public TeachersController(ICourseService courseService)
+    private readonly IServiceManager _serviceManager;
+
+    public TeachersController(IServiceManager serviceManager)
     {
-        _courseService = courseService;
+        _serviceManager = serviceManager;
     }
     // GET: api/teachers/{teacherId}/courses
     [HttpGet("{teacherId}/courses")]
@@ -22,7 +24,7 @@ public class TeachersController : ControllerBase
     {
         try
         {
-            var courses = await _courseService.GetCoursesByTeacherAsync(teacherId);
+            var courses = await _serviceManager.CourseService.GetCoursesByTeacherAsync(teacherId);
             if (courses == null)
                 return NotFound(new { message = "Teacher not found or invalid ID." });
             if (!courses.Any())
