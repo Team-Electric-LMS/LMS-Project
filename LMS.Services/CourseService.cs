@@ -1,4 +1,5 @@
 using LMS.Shared.DTOs;
+using LMS.Shared.DTOs.CourseDTOs;
 using Service.Contracts;
 using Domain.Models.Entities;
 using Domain.Contracts.Repositories;
@@ -26,7 +27,9 @@ public class CourseService : ICourseService
             {
                 Id = course.Id,
                 Name = course.Name ?? string.Empty,
-                TeacherId = teacherId
+                Description = course.Description ?? string.Empty,
+                StartDate = course.StartDate,
+                EndDate = course.EndDate
             });
         }
         catch (Exception ex)
