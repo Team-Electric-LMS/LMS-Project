@@ -27,10 +27,6 @@ public class Program
         builder.Services.ConfigureCors();
         builder.Services.ConfigureOpenApi();
 
-        // Register CourseService and CourseRepository
-        builder.Services.AddScoped<ICourseRepository, CourseRepository>();
-        builder.Services.AddScoped(provider => new Lazy<ICourseService>(() => provider.GetRequiredService<ICourseService>()));
-
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
