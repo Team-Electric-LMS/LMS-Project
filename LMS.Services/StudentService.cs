@@ -1,5 +1,5 @@
 ﻿using LMS.Infractructure.Data;
-using LMS.Shared.DTOs;
+using LMS.Shared.DTOs.CourseDTOs;
 using Microsoft.EntityFrameworkCore;
 using Service.Contracts;
 
@@ -31,13 +31,10 @@ namespace LMS.Services
                 .Select(c => new CourseDto
                 {
                     Id = c.Id,
-                    CourseName = c.Name,
-                    Description = c.Description,
-                    StartDate = c.StartDate.ToDateTime(TimeOnly.MinValue),
-                    EndDate = c.EndDate.ToDateTime(TimeOnly.MinValue),
-                    TeacherName = c.Teachers
-                          .Select(t => t.FirstName + " " + t.LastName)
-                          .FirstOrDefault() ?? string.Empty
+                    Name = c.Name ?? string.Empty,
+                    Description = c.Description ?? string.Empty,
+                    StartDate = c.StartDate,
+                    EndDate = c.EndDate
                 })
                 .FirstOrDefaultAsync();
 
