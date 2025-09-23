@@ -8,6 +8,7 @@ public class ServiceManager : IServiceManager
     private Lazy<IUserService> userService;
     private Lazy<ICourseService> courseService;
 
+    private Lazy<IStudentService> studentService;
     public IAuthService AuthService => authService.Value;
     public IUserService UserService => userService.Value;
     public ICourseService CourseService => courseService.Value;
