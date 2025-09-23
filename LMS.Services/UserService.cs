@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Domain.Contracts.Repositories;
 using Domain.Models.Exceptions;
+using LMS.Shared.DTOs.AuthDtos;
 using LMS.Shared.DTOs.UserDTOs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
@@ -20,6 +21,8 @@ public class UserService : IUserService
         this.mapper = mapper;
     }
     public async Task<bool> UserExistsAsync(string id) => await uow.UserRepository.UserExistsAsync(id);
+    public async Task<bool> EmailExistsAsync(string email) => await uow.UserRepository.EmailExistsAsync(email);
+    public async Task<bool> UserNameExistsAsync(string username) => await uow.UserRepository.NameExistsAsync(username);
 
     public async Task<UserDto> GetUserByIdAsync(string id, bool includeCourse=true, bool trackChanges = false)
     {
@@ -33,6 +36,22 @@ public class UserService : IUserService
 
         return dto;
     }
+
+    public async Task<UserUpdateDto> GetUserByIdentityName(string name, bool includeCourse = true, bool trackChanges = false)
+    {
+        var user = await uow.UserRepository.GetUserByIdentityNameAsync(name, trackChanges);
+        if (user == null) throw new($"User with username {name} was not found"); // ?? throw new UserNotFoundException(id);
+
+        var roles = await uow.UserRepository.GetUsersRolesAsync(user);
+      
+        var dto = mapper.Map<UserUpdateDto>(user);
+       dto.Role = roles.FirstOrDefault();
+   
+
+        return dto;
+    }
+
+
 
     public async Task<IEnumerable<UserDto>> GetStudents(Guid? id)
     {
