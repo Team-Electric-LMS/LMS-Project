@@ -22,6 +22,8 @@ public class Program
         builder.Services.ConfigureAuthentication(builder.Configuration);
         builder.Services.ConfigureIdentity();
 
+        builder.Services.AddModulesFeature();
+
         builder.Services.AddHostedService<DataSeedHostingService>();
         builder.Services.AddAutoMapper(cfg => cfg.AddProfile<MapperProfile>());
         builder.Services.ConfigureCors();
