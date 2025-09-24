@@ -1,6 +1,7 @@
 ﻿using LMS.Infractructure.Data;
 using LMS.Shared.DTOs.CourseDTOs;
 using LMS.Shared.DTOs.UserDTOs;
+using LMS.Shared.DTOs.ModuleDTOs;
 using Microsoft.EntityFrameworkCore;
 using Service.Contracts;
 
@@ -17,16 +18,12 @@ namespace LMS.Services
 
         public async Task<CourseWithTeachersDto?> GetCourseForStudentAsync(Guid studentId)
         {
-            // Hämta studenten
             var student = await _context.Users
                 .FirstOrDefaultAsync(s => s.Id == studentId.ToString());
 
-            if (student == null || student.CourseId == null)
-            {
+            if (student?.CourseId == null)
                 return null;
-            }
 
-            // Hämta kursen med lärare
             var course = await _context.Courses
                 .Include(c => c.Teachers)
                 .FirstOrDefaultAsync(c => c.Id == student.CourseId);
@@ -63,6 +60,62 @@ namespace LMS.Services
             {
                 Course = courseDto,
                 Teachers = teachers
+            };
+        }
+
+        public async Task<IEnumerable<ModuleDto>> GetModulesForStudentAsync(Guid studentId)
+        {
+            var student = await _context.Users
+                .Include(u => u.Course)
+                .ThenInclude(c => c.Modules)
+                .FirstOrDefaultAsync(s => s.Id == studentId.ToString());
+
+            if (student?.Course == null)
+                return Enumerable.Empty<ModuleDto>();
+
+            var modules = student.Course.Modules
+                .Select(m => new ModuleDto
+                {
+                    Id = m.Id,
+                    Name = m.Name ?? string.Empty,
+                    Description = m.Description ?? string.Empty,
+                    StartDate = m.StartDate,
+                    EndDate = m.EndDate,
+                    CourseId = m.CourseId
+                }).ToList();
+
+            return modules;
+        }
+
+        public async Task<CourseWithModulesDto?> GetCourseWithModulesForStudentAsync(Guid studentId)
+        {
+            var student = await _context.Users
+                .Include(u => u.Course)
+                .ThenInclude(c => c.Modules)
+                .FirstOrDefaultAsync(s => s.Id == studentId.ToString());
+
+            if (student?.Course == null)
+                return null;
+
+            var course = student.Course;
+            var modules = course.Modules.Select(m => new ModuleDto
+            {
+                Id = m.Id,
+                Name = m.Name ?? string.Empty,
+                Description = m.Description ?? string.Empty,
+                StartDate = m.StartDate,
+                EndDate = m.EndDate,
+                CourseId = m.CourseId
+            }).ToList();
+
+            return new CourseWithModulesDto
+            {
+                Id = course.Id,
+                Name = course.Name ?? string.Empty,
+                Description = course.Description ?? string.Empty,
+                StartDate = course.StartDate,
+                EndDate = course.EndDate,
+                Modules = modules
             };
         }
     }
