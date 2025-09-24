@@ -20,5 +20,11 @@ namespace LMS.Infractructure.Repositories
                 .Include(u => u.Course)
                 .FirstOrDefaultAsync(u => u.Id == studentId.ToString());
         }
+
+        public async Task<ApplicationUser?> GetStudentByIdAsync(Guid studentId)
+        {
+            return await _context.Users
+                .FirstOrDefaultAsync(u => u.Id == studentId.ToString());
+        }
     }
 }
