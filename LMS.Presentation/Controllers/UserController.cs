@@ -1,4 +1,5 @@
-﻿using LMS.Shared.DTOs.ForFrontEndTemplate;
+﻿using Bogus.DataSets;
+using LMS.Shared.DTOs.ForFrontEndTemplate;
 using LMS.Shared.DTOs.UserDTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -33,6 +34,29 @@ public class UserController : ControllerBase
     //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<UserDto>> GetUserAsync(string userId, bool includeCourse=true) =>
          Ok(await serviceManager.UserService.GetUserByIdAsync(userId, includeCourse));
+
+    [HttpGet("username/{UserName}")]
+    [Authorize(Roles = "Teacher")]
+    [SwaggerOperation(
+     Summary = "Get User info on a LMS user for authenticated users",
+     Description = "Returns data on Student or Teacher, with or without an extended info on assigned course/s" +
+     ". Requires a valid JWT token and a string Id")]
+    [SwaggerResponse(StatusCodes.Status200OK, "A user data", typeof(IEnumerable<StudentDto>))]
+    //[SwaggerResponse(StatusCodes.Status404NotFound)]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized, "Unauthorized - JWT token missing or invalid")]
+    //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<UserDto>> GetUserByNameAsync(string UserName, bool includeCourse = true)
+    {
+        var res = await serviceManager.UserService.GetUserByIdentityName(UserName, includeCourse);
+        if (res == null)
+            return NotFound(new { message = $"User '{UserName}' was not found." });
+
+       return Ok(res);
+
+    }
+     
+
+
 
     // GET: api/users/class/{id}
     [HttpGet("class/{courseId:Guid?}")]

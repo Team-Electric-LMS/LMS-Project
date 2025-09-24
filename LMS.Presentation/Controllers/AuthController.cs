@@ -35,6 +35,36 @@ public class AuthController : ControllerBase
         return result.Succeeded ? StatusCode(StatusCodes.Status201Created) : BadRequest(result.Errors);
     }
 
+    [HttpGet("check-email/{email}")]
+    [SwaggerOperation(
+       Summary = "Check if email registered in database",
+       Description = "Checks if a user with such email is already registered.")]
+    [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid input")]
+    public async Task<IActionResult> CheckEmail(string email) => Ok(await serviceManager.UserService.EmailExistsAsync(email));
+
+    [HttpGet("check-username/{username}")]
+    [SwaggerOperation(
+       Summary = "\"Check if username registered in database",
+       Description = "Checks if a user with such username is already registered.")]
+    [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid input")]
+    public async Task<IActionResult> CheckUserName(string email) => Ok(await serviceManager.UserService.UserNameExistsAsync(email));
+
+
+    [HttpPost("edit")]
+    [SwaggerOperation(
+        Summary = "Edit an existing user",
+        Description = "Edits an existing user account with the provided details."
+    )]
+    [SwaggerResponse(StatusCodes.Status201Created, "User data successfully edited")]
+    [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid input or update failed")]
+    public async Task<IActionResult> EditUser(UserUpdateDto userEditDto)
+    {
+        IdentityResult result = await serviceManager.AuthService.UpdateUserAsync(userEditDto);
+        return result.Succeeded ? StatusCode(StatusCodes.Status201Created) : BadRequest(result.Errors);
+    }
+
+
+
     [HttpPost("login")]
     [AllowAnonymous]
     [SwaggerOperation(
@@ -73,6 +103,7 @@ public class AuthController : ControllerBase
             Id = User.FindFirst(ClaimTypes.NameIdentifier)?.Value,
             Email = User.FindFirst(ClaimTypes.Name)?.Value,
             Role = User.FindFirst(ClaimTypes.Role)?.Value,
+            Name = User.FindFirst(ClaimTypes.GivenName)?.Value
         };
 
         return Ok(claims);
