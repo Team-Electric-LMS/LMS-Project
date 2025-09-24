@@ -40,7 +40,7 @@ public class UserService : IUserService
     public async Task<UserUpdateDto> GetUserByIdentityName(string name, bool includeCourse = true, bool trackChanges = false)
     {
         var user = await uow.UserRepository.GetUserByIdentityNameAsync(name, trackChanges);
-        if (user == null) throw new($"User with username {name} was not found"); // ?? throw new UserNotFoundException(id);
+        if (user == null) return null; //throw new($"User with username {name} was not found"); // ?? throw new UserNotFoundException(id);
 
         var roles = await uow.UserRepository.GetUsersRolesAsync(user);
       
