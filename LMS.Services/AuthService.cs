@@ -81,8 +81,9 @@ public class AuthService : IAuthService
         var claims = new List<Claim>()
         {
             new Claim(ClaimTypes.Name, user.UserName!),
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             //Add more if needed
+            new Claim(ClaimTypes.GivenName, (user.LastName + user.FirstName).ToString())
         };
 
         var roles = await userManager.GetRolesAsync(user);
@@ -109,22 +110,50 @@ public class AuthService : IAuthService
         ArgumentNullException.ThrowIfNull(userRegistrationDto);
 
         var isRoleValid = !string.IsNullOrWhiteSpace(userRegistrationDto.Role);
+        var roleExists = await roleManager.RoleExistsAsync(userRegistrationDto.Role!);
 
-        if (isRoleValid)
-        {
-            var roleExists = await roleManager.RoleExistsAsync(userRegistrationDto.Role!);
-            if (!roleExists)
-                return IdentityResult.Failed(new IdentityError { Description = "Role does not exist" });
-        }
-
+        if (isRoleValid && !roleExists)
+           return IdentityResult.Failed(new IdentityError { Description = "Role does not exist" });
+        
         var user = mapper.Map<ApplicationUser>(userRegistrationDto);
         var result = await userManager.CreateAsync(user, userRegistrationDto.Password);
 
-        if (!result.Succeeded) return result;
+        if (isRoleValid && roleExists) await userManager.AddToRoleAsync(user, userRegistrationDto.Role!);
 
-        if (isRoleValid)
-            result = await userManager.AddToRoleAsync(user, userRegistrationDto.Role!);
+      //  if (!result.Succeeded) return result;
 
+        return result;  //TODO : fix
+    }
+
+    public async Task<IdentityResult> UpdateUserAsync(UserUpdateDto userUpdateDto)
+    {
+        ArgumentNullException.ThrowIfNull(userUpdateDto);
+        var user = await userManager.FindByIdAsync(userUpdateDto.Id);
+        if (user == null)
+            return IdentityResult.Failed(new IdentityError { Description = "User not found" });
+
+
+
+        var roleExists = await roleManager.RoleExistsAsync(userUpdateDto.Role!);
+        if (!roleExists && userUpdateDto.Role != "unassign") 
+            return IdentityResult.Failed(new IdentityError { Description = "Role does not exist" });
+
+        
+         var currentRoles = await userManager.GetRolesAsync(user);
+         await userManager.RemoveFromRolesAsync(user, currentRoles);
+       
+
+        mapper.Map(userUpdateDto, user);
+
+        var result = await userManager.UpdateAsync(user);
+
+        if (roleExists && userUpdateDto.Role != "unassign")
+            await userManager.AddToRoleAsync(user, userUpdateDto.Role!);
+
+
+        if (!result.Succeeded) return null;
+
+     
         return result;
     }
 
