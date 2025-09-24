@@ -12,10 +12,14 @@ public class UserRepository : IUserRepository
         this.userManager = userManager;
     }
     public async Task<bool> UserExistsAsync(string id) => await userManager.FindByIdAsync(id) != null;
+    public async Task<bool> EmailExistsAsync(string email) => await userManager.FindByEmailAsync(email) != null;
+    public async Task<bool> NameExistsAsync(string name) => await userManager.FindByNameAsync(name) != null;
 
     public async Task<IEnumerable<string>?> GetUsersRolesAsync(ApplicationUser user) => await userManager.GetRolesAsync(user);
 
     public async Task<ApplicationUser?> GetUserByIdAsync(string id, bool trackChanges = false) => await userManager.FindByIdAsync(id);
+
+    public async Task<ApplicationUser?> GetUserByIdentityNameAsync(string name, bool trackChanges = false) => await userManager.FindByNameAsync(name);
 
     public async Task<ApplicationUser?> GetUserWithCourseAsync(string id, bool trackChanges = false) 
         => await userManager.Users.Where(i => i.Id == id).Include(x => x.CoursesTaught).Include(x => x.Course).FirstOrDefaultAsync();
