@@ -11,9 +11,12 @@ public class MapperProfile : Profile
     public MapperProfile()
     {
         CreateMap<UserRegistrationDto, ApplicationUser>();
+        CreateMap<UserUpdateDto, ApplicationUser>();
         CreateMap<ApplicationUser, StudentDto>();
         CreateMap<ApplicationUser, TeacherDto>();
         CreateMap<ApplicationUser, UserDto>();
+        CreateMap<ApplicationUser, UserUpdateDto>();
+        CreateMap<ApplicationUser, UserRegistrationDto>();
         CreateMap<Course, CourseDto>();
     }
 }
