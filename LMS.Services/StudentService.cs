@@ -1,10 +1,7 @@
 ﻿using Domain.Contracts.Repositories;
-using LMS.Infractructure.Data;
-using LMS.Infractructure.Repositories;
 using LMS.Shared.DTOs.CourseDTOs;
 using LMS.Shared.DTOs.UserDTOs;
 using LMS.Shared.DTOs.ModuleDTOs;
-using Microsoft.EntityFrameworkCore;
 using Service.Contracts;
 
 namespace LMS.Services
@@ -24,6 +21,7 @@ namespace LMS.Services
             if (student == null || student.CourseId == null)
             {
                 return null;
+            }
 
             var course = await unitOfWork.Courses.GetCourseWithTeachersAsync(student.CourseId.Value);
             if (course == null)
@@ -38,7 +36,7 @@ namespace LMS.Services
                 EndDate = course.EndDate
             };
 
-            var teachers = course.Teachers.Select(t => new LMS.Shared.DTOs.UserDTOs.TeacherDto
+            var teachers = course.Teachers.Select(t => new TeacherDto
             {
                 Id = t.Id,
                 FirstName = t.FirstName ?? string.Empty,
@@ -63,11 +61,7 @@ namespace LMS.Services
 
         public async Task<IEnumerable<ModuleDto>> GetModulesForStudentAsync(Guid studentId)
         {
-            var student = await _context.Users
-                .Include(u => u.Course)
-                .ThenInclude(c => c.Modules)
-                .FirstOrDefaultAsync(s => s.Id == studentId.ToString());
-
+            var student = await unitOfWork.Students.GetStudentWithCourseAsync(studentId);
             if (student?.Course == null)
                 return Enumerable.Empty<ModuleDto>();
 
@@ -87,11 +81,7 @@ namespace LMS.Services
 
         public async Task<CourseWithModulesDto?> GetCourseWithModulesForStudentAsync(Guid studentId)
         {
-            var student = await _context.Users
-                .Include(u => u.Course)
-                .ThenInclude(c => c.Modules)
-                .FirstOrDefaultAsync(s => s.Id == studentId.ToString());
-
+            var student = await unitOfWork.Students.GetStudentWithCourseAsync(studentId);
             if (student?.Course == null)
                 return null;
 
