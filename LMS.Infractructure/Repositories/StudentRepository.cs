@@ -27,5 +27,13 @@ namespace LMS.Infractructure.Repositories
             return await _context.Users
                 .FirstOrDefaultAsync(u => u.Id == studentId.ToString());
         }
+
+        public async Task<Module?> GetModuleWithActivitiesAsync(Guid moduleId)
+        {
+            return await _context.Modules
+                .Include(m => m.Activities)
+                .ThenInclude(a => a.ActivityType)
+                .FirstOrDefaultAsync(m => m.Id == moduleId);
+        }
     }
 }

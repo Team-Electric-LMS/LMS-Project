@@ -3,6 +3,7 @@ using LMS.Shared.DTOs.CourseDTOs;
 using LMS.Shared.DTOs.UserDTOs;
 using LMS.Shared.DTOs.ModuleDTOs;
 using Service.Contracts;
+using LMS.Shared.DTOs.ActivityDTOs;
 
 namespace LMS.Services
 {
@@ -106,5 +107,31 @@ namespace LMS.Services
                 Modules = modules
             };
         }
+
+        public async Task<IEnumerable<ActivityDto>> GetActivitiesForModuleAsync(Guid studentId, Guid moduleId)
+        {
+            var student = await unitOfWork.Students.GetStudentWithCourseAsync(studentId);
+            if (student?.Course == null)
+                return Enumerable.Empty<ActivityDto>();
+
+            var module = await unitOfWork.Students.GetModuleWithActivitiesAsync(moduleId);
+            if (module == null)
+                return Enumerable.Empty<ActivityDto>();
+
+            var activityDtos = module.Activities.Select(activity => new ActivityDto
+            {
+                Id = activity.Id,
+                ModuleId = activity.ModuleId,
+                ActivityTypeId = activity.ActivityTypeId,
+                Name = activity.Name,
+                Description = activity.Description,
+                StartDate = activity.StartDate,
+                EndDate = activity.EndDate,
+                ActivityTypeName = activity.ActivityType.Name
+            }).ToList();
+
+            return activityDtos;
+        }
     }
+    
 }
