@@ -38,7 +38,8 @@ namespace LMS.Presentation.Controllers
                 return StatusCode(500, new { message = "An unexpected error occurred.", details = ex.Message });
             }
         }
-
+        // endpoint for getting modules for a student by student id
+        // does not include course details, can be used for creating a schedule of modules
         [HttpGet("{id}/modules")]
         public async Task<IActionResult> GetModulesForStudent(Guid id)
         {
@@ -59,7 +60,8 @@ namespace LMS.Presentation.Controllers
                 return StatusCode(500, new { message = "An unexpected error occurred.", details = ex.Message });
             }
         }
-
+        // endpoint for getting course + modules for a student
+        // combines the two previous endpoints and works as a dashboard overview
         [HttpGet("{id}/course-with-modules")]
         public async Task<IActionResult> GetCourseWithModulesForStudent(Guid id)
         {
