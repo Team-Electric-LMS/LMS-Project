@@ -34,6 +34,8 @@
     <ProjectReference Include="..\LMS.Infractructure\LMS.Infractructure.csproj" />
     <ProjectReference Include="..\LMS.Presentation\LMS.Presentation.csproj" />
     <ProjectReference Include="..\LMS.Services\LMS.Services.csproj" />
+    <ProjectReference Include="..\Service.Contracts\Service.Contracts.csproj" />
+    <ProjectReference Include="..\LMS.Shared\LMS.Shared.csproj" />
   </ItemGroup>
 
 </Project>
