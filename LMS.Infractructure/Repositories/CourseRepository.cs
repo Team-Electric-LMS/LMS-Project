@@ -34,5 +34,13 @@ namespace LMS.Infractructure.Repositories
                 .Include(c => c.Teachers)
                 .FirstOrDefaultAsync(c => c.Id == id);
         }
+
+        public async Task<Course?> GetCourseWithTeachersAsync(Guid courseId)
+        {
+            return await context.Courses
+                .Include(c => c.Teachers)
+                .FirstOrDefaultAsync(c => c.Id == courseId);
+        }
+
     }
 }

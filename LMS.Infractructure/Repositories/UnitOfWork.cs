@@ -7,15 +7,19 @@ public class UnitOfWork : IUnitOfWork
     private readonly ApplicationDbContext context;
     private readonly Lazy<IUserRepository> userRepository;
     private readonly Lazy<ICourseRepository> courseRepository;
+    private readonly Lazy<IStudentRepository> studentRepository;
     public IUserRepository UserRepository => userRepository.Value;
     public ICourseRepository CourseRepository => courseRepository.Value;
-    public ICourseRepository Courses => courseRepository.Value; 
+    public ICourseRepository Courses => courseRepository.Value;
+    public IStudentRepository Students => studentRepository.Value;
 
-    public UnitOfWork(ApplicationDbContext context, Lazy<IUserRepository> userRepository, Lazy<ICourseRepository> courseRepository)
+    public UnitOfWork(ApplicationDbContext context, Lazy<IUserRepository> userRepository, Lazy<ICourseRepository> courseRepository,
+        Lazy<IStudentRepository> studentRepository)
     {
         this.context = context ?? throw new ArgumentNullException(nameof(context));
         this.userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
         this.courseRepository = courseRepository ?? throw new ArgumentNullException(nameof(courseRepository));
+        this.studentRepository = studentRepository ?? throw new ArgumentNullException(nameof(studentRepository));
     }
     public async Task CompleteAsync() => await context.SaveChangesAsync();
 }

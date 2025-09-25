@@ -1,4 +1,6 @@
-﻿using LMS.Infractructure.Data;
+﻿using Domain.Contracts.Repositories;
+using LMS.Infractructure.Data;
+using LMS.Infractructure.Repositories;
 using LMS.Shared.DTOs.CourseDTOs;
 using LMS.Shared.DTOs.UserDTOs;
 using LMS.Shared.DTOs.ModuleDTOs;
@@ -9,25 +11,21 @@ namespace LMS.Services
 {
     public class StudentService : IStudentService
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IUnitOfWork unitOfWork;
 
-        public StudentService(ApplicationDbContext context)
+        public StudentService(IUnitOfWork unitOfWork)
         {
-            _context = context;
+            this.unitOfWork = unitOfWork;
         }
 
         public async Task<CourseWithTeachersDto?> GetCourseForStudentAsync(Guid studentId)
         {
-            var student = await _context.Users
-                .FirstOrDefaultAsync(s => s.Id == studentId.ToString());
-
-            if (student?.CourseId == null)
+            var student = await unitOfWork.Students.GetStudentByIdAsync(studentId);
+            if (student == null || student.CourseId == null)
+            {
                 return null;
 
-            var course = await _context.Courses
-                .Include(c => c.Teachers)
-                .FirstOrDefaultAsync(c => c.Id == student.CourseId);
-
+            var course = await unitOfWork.Courses.GetCourseWithTeachersAsync(student.CourseId.Value);
             if (course == null)
                 return null;
 
