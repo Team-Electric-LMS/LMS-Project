@@ -1,9 +1,7 @@
 ﻿using Domain.Contracts.Repositories;
-using LMS.Infractructure.Data;
-using LMS.Infractructure.Repositories;
 using LMS.Shared.DTOs.CourseDTOs;
 using LMS.Shared.DTOs.UserDTOs;
-using Microsoft.EntityFrameworkCore;
+using LMS.Shared.DTOs.ModuleDTOs;
 using Service.Contracts;
 
 namespace LMS.Services
@@ -38,7 +36,7 @@ namespace LMS.Services
                 EndDate = course.EndDate
             };
 
-            var teachers = course.Teachers.Select(t => new LMS.Shared.DTOs.UserDTOs.TeacherDto
+            var teachers = course.Teachers.Select(t => new TeacherDto
             {
                 Id = t.Id,
                 FirstName = t.FirstName ?? string.Empty,
@@ -58,6 +56,54 @@ namespace LMS.Services
             {
                 Course = courseDto,
                 Teachers = teachers
+            };
+        }
+
+        public async Task<IEnumerable<ModuleDto>> GetModulesForStudentAsync(Guid studentId)
+        {
+            var student = await unitOfWork.Students.GetStudentWithCourseAsync(studentId);
+            if (student?.Course == null)
+                return Enumerable.Empty<ModuleDto>();
+
+            var modules = student.Course.Modules
+                .Select(m => new ModuleDto
+                {
+                    Id = m.Id,
+                    Name = m.Name ?? string.Empty,
+                    Description = m.Description ?? string.Empty,
+                    StartDate = m.StartDate,
+                    EndDate = m.EndDate,
+                    CourseId = m.CourseId
+                }).ToList();
+
+            return modules;
+        }
+
+        public async Task<CourseWithModulesDto?> GetCourseWithModulesForStudentAsync(Guid studentId)
+        {
+            var student = await unitOfWork.Students.GetStudentWithCourseAsync(studentId);
+            if (student?.Course == null)
+                return null;
+
+            var course = student.Course;
+            var modules = course.Modules.Select(m => new ModuleDto
+            {
+                Id = m.Id,
+                Name = m.Name ?? string.Empty,
+                Description = m.Description ?? string.Empty,
+                StartDate = m.StartDate,
+                EndDate = m.EndDate,
+                CourseId = m.CourseId
+            }).ToList();
+
+            return new CourseWithModulesDto
+            {
+                Id = course.Id,
+                Name = course.Name ?? string.Empty,
+                Description = course.Description ?? string.Empty,
+                StartDate = course.StartDate,
+                EndDate = course.EndDate,
+                Modules = modules
             };
         }
     }

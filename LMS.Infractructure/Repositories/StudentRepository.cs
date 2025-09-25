@@ -18,6 +18,7 @@ namespace LMS.Infractructure.Repositories
         {
             return await _context.Users
                 .Include(u => u.Course)
+                    .ThenInclude(c => c.Modules)
                 .FirstOrDefaultAsync(u => u.Id == studentId.ToString());
         }
 
