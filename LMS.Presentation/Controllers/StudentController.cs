@@ -82,5 +82,14 @@ namespace LMS.Presentation.Controllers
                 return StatusCode(500, new { message = "An unexpected error occurred.", details = ex.Message });
             }
         }
+        [HttpGet("{id}/course/students")]
+        public async Task<IActionResult> GetCoursemates(Guid id)
+        {
+            var studentDto = await serviceManager.StudentService.GetCoursematesAsync(id);
+            if (studentDto == null)
+                return NotFound($"No course mates found for student with id {id}");
+            return Ok(studentDto);
+
+        }
     }
 }
