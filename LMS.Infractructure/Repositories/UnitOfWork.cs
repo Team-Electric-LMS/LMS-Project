@@ -9,7 +9,6 @@ public class UnitOfWork : IUnitOfWork
     private readonly Lazy<ICourseRepository> courseRepository;
     private readonly Lazy<IStudentRepository> studentRepository;
     public IUserRepository UserRepository => userRepository.Value;
-    public ICourseRepository CourseRepository => courseRepository.Value;
     public ICourseRepository Courses => courseRepository.Value;
     public IStudentRepository Students => studentRepository.Value;
 
