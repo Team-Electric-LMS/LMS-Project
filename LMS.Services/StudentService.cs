@@ -123,7 +123,7 @@ namespace LMS.Services
                 Id = activity.Id,
                 ModuleId = activity.ModuleId,
                 ActivityTypeId = activity.ActivityTypeId,
-                Name = activity.Name,
+                ActivityTitle = activity.Name,
                 Description = activity.Description,
                 StartDate = activity.StartDate,
                 EndDate = activity.EndDate,

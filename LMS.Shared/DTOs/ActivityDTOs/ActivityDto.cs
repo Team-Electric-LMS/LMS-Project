@@ -8,13 +8,13 @@ namespace LMS.Shared.DTOs.ActivityDTOs
 {
     public class ActivityDto
     {
-        public Guid Id { get; set; }
-        public Guid ModuleId { get; set; }
-        public Guid ActivityTypeId { get; set; }
-        public string Name { get; set; } = null!;
-        public string Description { get; set; } = null!;
-        public DateOnly StartDate { get; set; }
-        public DateOnly EndDate { get; set; }
-        public string ActivityTypeName { get; set; } = null!;
+        public Guid Id { get; set; } //From Entity
+        public Guid ModuleId { get; set; } //From Activity 
+        public Guid ActivityTypeId { get; set; } //From Activity
+        public string ActivityTitle { get; set; } = null!; //From EntityEdu
+        public string Description { get; set; } = null!; //From EntityEdu
+        public DateOnly StartDate { get; set; } //From EntityEdu
+        public DateOnly EndDate { get; set; } //From EntityEdu
+        public string ActivityTypeName { get; set; } = null!; //From ActivityType
     }
 }
