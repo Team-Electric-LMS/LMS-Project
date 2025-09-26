@@ -82,5 +82,31 @@ namespace LMS.Presentation.Controllers
                 return StatusCode(500, new { message = "An unexpected error occurred.", details = ex.Message });
             }
         }
+
+        // GET api/student/{studentId}/module/{moduleId}/activities
+        [HttpGet("{studentId}/module/{moduleId}/activities")]
+        public async Task<IActionResult> GetActivitiesForModule(Guid studentId, Guid moduleId)
+        {
+            if (studentId == Guid.Empty)
+                return BadRequest("Invalid student ID.");
+
+            if (moduleId == Guid.Empty)
+                return BadRequest("Invalid module ID.");
+
+            try
+            {
+                var activities = await serviceManager.StudentService.GetActivitiesForModuleAsync(studentId, moduleId);
+
+                if (activities is null || !activities.Any())
+                    return NotFound($"No activities found for module {moduleId}.");
+
+                return Ok(activities);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An unexpected error occurred.", details = ex.Message });
+            }
+        }
+
     }
 }
