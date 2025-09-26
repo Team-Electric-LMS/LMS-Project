@@ -9,8 +9,9 @@ public interface IUserService
     Task<bool> EmailExistsAsync(string id);
     Task<bool> UserNameExistsAsync(string id);
 
-    Task<UserDto> GetUserByIdAsync(string id, bool includeCourse = true, bool trackChanges = false);
-    Task<UserUpdateDto> GetUserByIdentityName(string name, bool includeCourse = true, bool trackChanges = false);
+    Task<UserDto> GetUserByIdAsync(string id, bool trackChanges = false);
+    Task<UserDto> GetUserByIdentityName(string name, bool trackChanges = false);
+    Task<UserDto> GetUserWithCourse(string? id, string? email, bool trackChanges = false);
     Task UpdateUserCourseAsync(string id, bool unassign, AddUserCourseByIdDto? dto, bool trackChanges = true);
     Task<IEnumerable<UserDto>> GetStudents(Guid? id);
 }
