@@ -83,8 +83,8 @@ namespace LMS.Presentation.Controllers
             }
         }
 
-        // GET api/student/{studentId}/modules/{moduleId}/activities
-        [HttpGet("{studentId}/modules/{moduleId}/activities")]
+        // GET api/student/{studentId}/module/{moduleId}/activities
+        [HttpGet("{studentId}/module/{moduleId}/activities")]
         public async Task<IActionResult> GetActivitiesForModule(Guid studentId, Guid moduleId)
         {
             if (studentId == Guid.Empty)
@@ -97,8 +97,8 @@ namespace LMS.Presentation.Controllers
             {
                 var activities = await serviceManager.StudentService.GetActivitiesForModuleAsync(studentId, moduleId);
 
-                if (activities == null || !activities.Any())
-                    return NotFound($"No activities found for module {moduleId} and student {studentId}");
+                if (activities is null || !activities.Any())
+                    return NotFound($"No activities found for module {moduleId}.");
 
                 return Ok(activities);
             }
