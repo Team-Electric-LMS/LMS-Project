@@ -15,7 +15,7 @@ public interface IUserRepository
     Task<bool> NameExistsAsync(string name);
     Task<ApplicationUser?> GetUserByIdAsync(string id, bool trackChanges);
     Task<ApplicationUser?> GetUserByIdentityNameAsync(string name, bool trackChanges);
-    Task<ApplicationUser?> GetUserWithCourseAsync(string id, bool trackChanges = false);
+    Task<ApplicationUser?> GetUserWithCourseAsync(string? id, string? email, bool trackChanges = false);
     Task<IEnumerable<string>?> GetUsersRolesAsync(ApplicationUser user);
     Task<IEnumerable<ApplicationUser>?> GetAllOrClassmatesAsync(Guid? CourseId);
 }
