@@ -21,8 +21,18 @@ public class UserRepository : IUserRepository
 
     public async Task<ApplicationUser?> GetUserByIdentityNameAsync(string name, bool trackChanges = false) => await userManager.FindByNameAsync(name);
 
-    public async Task<ApplicationUser?> GetUserWithCourseAsync(string id, bool trackChanges = false) 
-        => await userManager.Users.Where(i => i.Id == id).Include(x => x.CoursesTaught).Include(x => x.Course).FirstOrDefaultAsync();
+    public async Task<ApplicationUser?> GetUserWithCourseAsync(string? id, string? email, bool trackChanges = false)
+    {
+        IQueryable<ApplicationUser> query = userManager.Users;
+
+        query = query
+            .Include(x => x.CoursesTaught)
+            .Include(x => x.Course);
+
+        if (!string.IsNullOrEmpty(id)) return await query.FirstOrDefaultAsync(u => u.Id == id);
+        else if (!string.IsNullOrEmpty(email)) return await query.FirstOrDefaultAsync(u => u.Email == email);
+        return null;
+    }
 
     public async Task<IEnumerable<ApplicationUser>?> GetAllOrClassmatesAsync(Guid? CourseId)
     {

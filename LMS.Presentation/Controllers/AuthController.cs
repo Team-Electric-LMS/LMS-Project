@@ -23,6 +23,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "Teacher")]
     [SwaggerOperation(
         Summary = "Register a new user",
         Description = "Creates a new user account with the provided registration details."
@@ -32,10 +33,13 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> RegisterUser(UserRegistrationDto userRegistrationDto)
     {
         IdentityResult result = await serviceManager.AuthService.RegisterUserAsync(userRegistrationDto);
-        return result.Succeeded ? StatusCode(StatusCodes.Status201Created) : BadRequest(result.Errors);
+        if (!result.Succeeded) return BadRequest(result.Errors);
+        var user = await serviceManager.UserService.GetUserByIdentityName(userRegistrationDto.UserName);
+        return Created($"api/users/{user.Id}", user);
     }
 
     [HttpGet("check-email/{email}")]
+    [Authorize(Roles = "Teacher")]
     [SwaggerOperation(
        Summary = "Check if email registered in database",
        Description = "Checks if a user with such email is already registered.")]
@@ -43,6 +47,7 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> CheckEmail(string email) => Ok(await serviceManager.UserService.EmailExistsAsync(email));
 
     [HttpGet("check-username/{username}")]
+    [Authorize(Roles = "Teacher")]
     [SwaggerOperation(
        Summary = "\"Check if username registered in database",
        Description = "Checks if a user with such username is already registered.")]
@@ -51,6 +56,7 @@ public class AuthController : ControllerBase
 
 
     [HttpPost("edit")]
+    [Authorize(Roles = "Teacher")]
     [SwaggerOperation(
         Summary = "Edit an existing user",
         Description = "Edits an existing user account with the provided details."
@@ -60,7 +66,9 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> EditUser(UserUpdateDto userEditDto)
     {
         IdentityResult result = await serviceManager.AuthService.UpdateUserAsync(userEditDto);
-        return result.Succeeded ? StatusCode(StatusCodes.Status201Created) : BadRequest(result.Errors);
+        if (!result.Succeeded) return BadRequest(result.Errors);
+        var user = await serviceManager.UserService.GetUserByIdAsync(userEditDto.Id);
+        return Created($"api/users/{user.Id}", user);
     }
 
 
