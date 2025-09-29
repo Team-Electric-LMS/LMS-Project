@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Contracts;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace LMS.Presentation.Controllers;
 
@@ -10,6 +11,13 @@ namespace LMS.Presentation.Controllers;
 [Produces("application/json")]
 public class CoursesController(IServiceManager serviceManager) : ControllerBase
 {
+    [HttpGet]
+    [Authorize(Roles = "Teacher")]
+    [SwaggerOperation(
+     Summary = "Get all courses",
+     Description = "Returns all courses, no filters")]
+    public async Task<ActionResult<IEnumerable<CourseDto>>> GetAlCoursesAsync() => Ok((IEnumerable<CourseDto>)await serviceManager.CourseService.GetAllCoursesAsync());
+
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<CourseDto>> GetCourse(Guid id) => Ok(await serviceManager.CourseService.GetCourseAsync(id));
 

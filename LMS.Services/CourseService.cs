@@ -25,6 +25,12 @@ public class CourseService : ICourseService
         return course == null ? throw new ArgumentException("Course not found") : _mapper.Map<CourseDto>(course);
     }
 
+    public async Task<IEnumerable<CourseDto>> GetAllCoursesAsync()
+    {
+            var courses = await _unitOfWork.Courses.GetAllAsync();
+            return courses.Select(c => _mapper.Map<CourseDto>(c));
+    }
+
     // Fetch courses by teacher ID
     public async Task<IEnumerable<CourseDto>> GetCoursesByTeacherAsync(Guid teacherId)
     {

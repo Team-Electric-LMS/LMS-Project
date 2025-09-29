@@ -9,6 +9,8 @@ namespace LMS.Infractructure.Repositories
     public class CourseRepository(ApplicationDbContext context) : RepositoryBase<Course>(context), ICourseRepository
     {
         // Get all courses
+
+        public async Task<IEnumerable<Course>> GetAllAsync(bool trackchanges = false) => await FindAll(trackchanges).ToListAsync();
         public async Task<IEnumerable<Course>> GetCoursesByTeacherAsync(Guid teacherId)
         {
             return await context.Courses
