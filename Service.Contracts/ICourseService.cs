@@ -4,6 +4,7 @@ namespace Service.Contracts;
 // Service contract for course-related operations
 public interface ICourseService
 {
+    Task<IEnumerable<CourseDto>> GetAllCoursesAsync();
     Task<CourseDto> GetCourseAsync(Guid id);
     Task<IEnumerable<CourseDto>> GetCoursesByTeacherAsync(Guid teacherId);
     Task<CourseDto> CreateCourseAsync(CreateCourseDto createCourseDto);
