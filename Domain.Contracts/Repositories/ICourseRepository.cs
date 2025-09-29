@@ -5,9 +5,10 @@ using Domain.Models.Entities;
 
 namespace Domain.Contracts.Repositories
 {
-    public interface ICourseRepository
+    public interface ICourseRepository : IRepositoryBase<Course>
     {
         Task<IEnumerable<Course>> GetCoursesByTeacherAsync(Guid teacherId);
         Task<Course?> GetCourseWithTeachersAsync(Guid courseId);
+        Task<Course?> GetCourseByIdAsync(Guid id, bool trackChanges = false);
     }
 }
