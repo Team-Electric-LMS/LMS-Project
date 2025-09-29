@@ -8,6 +8,8 @@ public class UnitOfWork : IUnitOfWork
     private readonly Lazy<IUserRepository> userRepository;
     private readonly Lazy<ICourseRepository> courseRepository;
     private readonly Lazy<IStudentRepository> studentRepository;
+    private IModuleRepository? _modules;
+    public IModuleRepository Modules => _modules ??= new ModuleRepository(context);
     public IUserRepository UserRepository => userRepository.Value;
     public ICourseRepository Courses => courseRepository.Value;
     public IStudentRepository Students => studentRepository.Value;
