@@ -107,29 +107,30 @@ namespace LMS.Services
             };
         }
 
+
         public async Task<IEnumerable<StudentDto>> GetCoursematesAsync(Guid studentId)
         {
-            // Get student
             var student = await unitOfWork.Students.GetStudentByIdAsync(studentId);
-
             if (student == null || student.CourseId == null)
             {
-                return null;
+                return Enumerable.Empty<StudentDto>();
             }
 
-            var course = await unitOfWork.Courses.GetCourseWithTeachersAsync(student.CourseId.Value);     //get course student is enrolled in
+            var course = await unitOfWork.Courses.GetCourseWithStudentsAsync(student.CourseId.Value);
+            if (course == null || course.Students == null)
+                return Enumerable.Empty<StudentDto>();
 
-            if (course == null)
-                return null;
+            var coursemates = course.Students
+                //.Where(s => s.Id != studentId) // Compare Guid with Guid
+                .Select(s => new StudentDto
+                {
+                    FirstName = s.FirstName ?? string.Empty,
+                    LastName = s.LastName ?? string.Empty,
+                    Email = s.Email ?? string.Empty,
+                })
+                .ToList();
 
-            IEnumerable<StudentDto> studentDto = course.Students.Select(s => new StudentDto //get all students in that course
-            {
-                Id = s.Id,
-                FirstName = s.FirstName ?? string.Empty,
-                LastName = s.LastName ?? string.Empty,
-                Email = s.Email ?? string.Empty,
-            }).ToList();
-            return studentDto;
+            return coursemates;
         }
     }
 }

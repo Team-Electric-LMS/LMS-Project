@@ -8,6 +8,7 @@ namespace Domain.Contracts.Repositories
     public interface ICourseRepository
     {
         Task<IEnumerable<Course>> GetCoursesByTeacherAsync(Guid teacherId);
+        Task<Course?> GetCourseWithStudentsAsync(Guid studentId);
         Task<Course?> GetCourseWithTeachersAsync(Guid courseId);
     }
 }
