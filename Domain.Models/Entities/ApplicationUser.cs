@@ -11,5 +11,4 @@ public class ApplicationUser : IdentityUser
     public Guid? CourseId { get; set; }
     public Course? Course { get; set; }
     public ICollection<Course> CoursesTaught { get; set; } = new List<Course>();
-
 }
