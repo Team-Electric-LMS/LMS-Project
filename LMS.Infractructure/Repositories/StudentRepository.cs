@@ -27,5 +27,12 @@ namespace LMS.Infractructure.Repositories
             return await _context.Users
                 .FirstOrDefaultAsync(u => u.Id == studentId.ToString());
         }
+
+        //public async Task<IEnumerable<ApplicationUser?>> GetStudentsByCourseIdAsync(Guid courseId)
+        //{
+        //    return await _context.Students
+        //        .Where(s => s.CourseId == courseId)
+        //        .ToListAsync();
+        //}
     }
 }
