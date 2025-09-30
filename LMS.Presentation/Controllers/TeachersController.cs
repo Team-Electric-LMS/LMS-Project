@@ -37,4 +37,23 @@ public class TeachersController : ControllerBase
             return StatusCode(500, new { message = "An unexpected error happened, probably runtime related. Please check logs.", details = ex.Message });
         }
     }
+
+    // GET: api/teachers/courses/{courseId}/modules
+    [HttpGet("courses/{courseId}/modules")]
+    [Authorize(Roles = "Teacher")]
+    // Fetch all modules belonging to a specific course
+    public async Task<IActionResult> GetModulesForCourse(Guid courseId)
+    {
+        try
+        {
+            var modules = await _serviceManager.ModuleService.GetByCourseIdAsync(courseId);
+            if (modules == null || !modules.Any())
+                return Ok(new List<object>()); // Return empty list if no modules
+            return Ok(modules);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "An unexpected error happened, probably runtime related. Please check logs.", details = ex.Message });
+        }
+    }
 }
