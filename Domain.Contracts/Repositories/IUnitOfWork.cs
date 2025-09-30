@@ -6,4 +6,6 @@ public interface IUnitOfWork
     ICourseRepository Courses { get; }
     IStudentRepository Students { get; }
     Task CompleteAsync();
+
+    IModuleRepository Modules { get; }
 }

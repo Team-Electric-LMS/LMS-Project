@@ -1,5 +1,7 @@
 using LMS.Shared.DTOs.CourseDTOs;
 using Service.Contracts;
+using Domain.Contracts;
+using Domain.Contracts.Repositories;
 
 namespace LMS.Services;
 
@@ -13,6 +15,8 @@ public class ServiceManager : IServiceManager
     public IUserService UserService => userService.Value;
     public ICourseService CourseService => courseService.Value;
     public IStudentService StudentService => studentService.Value;
+
+    public IModuleService ModuleService { get; }
 
     public ServiceManager(Lazy<IAuthService> authService, Lazy<IUserService> userService, Lazy<ICourseService> courseService, Lazy<IStudentService> studentService)
     {
