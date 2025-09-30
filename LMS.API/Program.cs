@@ -27,6 +27,8 @@ public class Program
         builder.Services.ConfigureCors();
         builder.Services.ConfigureOpenApi();
 
+        builder.Services.AddScoped<IModuleService, ModuleService>();
+
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
