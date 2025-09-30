@@ -6,14 +6,11 @@ using LMS.Infractructure.Data;
 namespace LMS.Infractructure.Repositories
 {
     // Course repository implementation
-    public class CourseRepository : ICourseRepository
+    public class CourseRepository(ApplicationDbContext context) : RepositoryBase<Course>(context), ICourseRepository
     {
-        private readonly ApplicationDbContext context;
-        public CourseRepository(ApplicationDbContext context)
-        {
-            this.context = context;
-        }
         // Get all courses
+
+        public async Task<IEnumerable<Course>> GetAllAsync(bool trackchanges = false) => await FindAll(trackchanges).ToListAsync();
         public async Task<IEnumerable<Course>> GetCoursesByTeacherAsync(Guid teacherId)
         {
             return await context.Courses

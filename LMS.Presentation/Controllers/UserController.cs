@@ -32,8 +32,8 @@ public class UserController : ControllerBase
     //[SwaggerResponse(StatusCodes.Status404NotFound)]
     [SwaggerResponse(StatusCodes.Status401Unauthorized, "Unauthorized - JWT token missing or invalid")]
     //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<UserDto>> GetUserAsync(string userId, bool includeCourse=true) =>
-         Ok(await serviceManager.UserService.GetUserByIdAsync(userId, includeCourse));
+    public async Task<ActionResult<UserDto>> GetUserAsync(string userId) =>
+         Ok(await serviceManager.UserService.GetUserByIdAsync(userId));
 
     [HttpGet("username/{UserName}")]
     [Authorize(Roles = "Teacher")]
@@ -45,16 +45,32 @@ public class UserController : ControllerBase
     //[SwaggerResponse(StatusCodes.Status404NotFound)]
     [SwaggerResponse(StatusCodes.Status401Unauthorized, "Unauthorized - JWT token missing or invalid")]
     //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<UserDto>> GetUserByNameAsync(string UserName, bool includeCourse = true)
+    public async Task<ActionResult<UserDto>> GetUserByNameAsync(string UserName)
     {
-        var res = await serviceManager.UserService.GetUserByIdentityName(UserName, includeCourse);
-        if (res == null)
-            return NotFound(new { message = $"User '{UserName}' was not found." });
+        var res = await serviceManager.UserService.GetUserByIdentityName(UserName);
+        if (res == null) return NotFound(new { message = $"User '{UserName}' was not found." });
 
        return Ok(res);
-
     }
-     
+
+    [HttpGet("extended")]
+    [Authorize(Roles = "Teacher")]
+    [SwaggerOperation(
+     Summary = "Get User data with Course Name info on a LMS user for authenticated users",
+     Description = "Returns data on Student or Teacher, with info on assigned course/s" +
+     ". Requires a valid JWT token and a string Id")]
+    [SwaggerResponse(StatusCodes.Status200OK, "A user data", typeof(IEnumerable<StudentDto>))]
+    [SwaggerResponse(StatusCodes.Status404NotFound)]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized, "Unauthorized - JWT token missing or invalid")]
+    //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+
+    public async Task<ActionResult<UserDto>> GetUserWithCourse([FromQuery] string? id, [FromQuery] string? email,  [FromQuery] bool trackChanges = false)
+    {
+        if (string.IsNullOrEmpty(id) && string.IsNullOrEmpty(email))  return BadRequest("Either id or name must be provided.");
+        var user = await serviceManager.UserService.GetUserWithCourse(id, email, trackChanges);
+        if (user == null) return NotFound($"User with {(id != null ? $"id {id}" : $"name {email}")} was not found.");
+        return Ok(user);
+    }
 
 
 
@@ -63,7 +79,7 @@ public class UserController : ControllerBase
     [Authorize]
     [SwaggerOperation(
        Summary = "Get info with email on all students from school or class, for authenticated users",
-       Description = "Returns data with email on all Students or studens of one class if ClassId is provided." +
+       Description = "Returns data with email on all Students or students of one class if ClassId is provided." +
        ". Requires a valid JWT token")]
     [SwaggerResponse(StatusCodes.Status200OK, "A user data", typeof(IEnumerable<UserDto>))]
     //[SwaggerResponse(StatusCodes.Status404NotFound)]
@@ -76,6 +92,7 @@ public class UserController : ControllerBase
 
     // POST /users/{id}/assign/ 
     [HttpPost("{userId:Guid}/assign")]
+    [Authorize(Roles = "Teacher")]
     [SwaggerOperation(Summary = "Assign course to a user", Description = "Assign course to an existing User (Id)")]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

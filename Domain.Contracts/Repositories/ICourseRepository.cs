@@ -5,10 +5,12 @@ using Domain.Models.Entities;
 
 namespace Domain.Contracts.Repositories
 {
-    public interface ICourseRepository
+    public interface ICourseRepository : IRepositoryBase<Course>
     {
+        Task<IEnumerable<Course>> GetAllAsync(bool trackchanges = false);
         Task<IEnumerable<Course>> GetCoursesByTeacherAsync(Guid teacherId);
         Task<Course?> GetCourseWithStudentsAsync(Guid studentId);
         Task<Course?> GetCourseWithTeachersAsync(Guid courseId);
+        Task<Course?> GetCourseByIdAsync(Guid id, bool trackChanges = false);
     }
 }

@@ -28,11 +28,12 @@ namespace LMS.Infractructure.Repositories
                 .FirstOrDefaultAsync(u => u.Id == studentId.ToString());
         }
 
-        //public async Task<IEnumerable<ApplicationUser?>> GetStudentsByCourseIdAsync(Guid courseId)
-        //{
-        //    return await _context.Students
-        //        .Where(s => s.CourseId == courseId)
-        //        .ToListAsync();
-        //}
+        public async Task<Module?> GetModuleWithActivitiesAsync(Guid moduleId)
+        {
+            return await _context.Modules
+                .Include(m => m.Activities)
+                .ThenInclude(a => a.ActivityType)
+                .FirstOrDefaultAsync(m => m.Id == moduleId);
+        }
     }
 }

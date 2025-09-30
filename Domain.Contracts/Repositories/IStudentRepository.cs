@@ -6,5 +6,7 @@ namespace Domain.Contracts.Repositories
     {
         Task<ApplicationUser?> GetStudentWithCourseAsync(Guid studentId);
         Task<ApplicationUser?> GetStudentByIdAsync(Guid studentId);
+        Task<Module?> GetModuleWithActivitiesAsync(Guid moduleId);
+
     }
 }
