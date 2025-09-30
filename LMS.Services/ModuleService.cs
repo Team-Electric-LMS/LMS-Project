@@ -71,5 +71,49 @@ namespace LMS.Services
                 })
                 .ToListAsync(cancellationToken);
         }
+
+        public async Task<ModuleDto> CreateModuleAsync(CreateModuleDto dto, CancellationToken cancellationToken = default)
+        {
+            var module = new Domain.Models.Entities.Module
+            {
+                Id = Guid.NewGuid(),
+                Name = dto.Name,
+                Description = dto.Description,
+                StartDate = dto.StartDate,
+                EndDate = dto.EndDate,
+                CourseId = dto.CourseId
+            };
+            await _uow.Modules.AddAsync(module, cancellationToken);
+            await _uow.CompleteAsync();
+            return new ModuleDto
+            {
+                Id = module.Id,
+                Name = module.Name,
+                Description = module.Description,
+                StartDate = module.StartDate,
+                EndDate = module.EndDate,
+                CourseId = module.CourseId
+            };
+        }
+
+        public async Task<ModuleDto?> UpdateModuleAsync(Guid moduleId, UpdateModuleDto dto, CancellationToken cancellationToken = default)
+        {
+            var module = await _uow.Modules.GetByIdAsync(moduleId, cancellationToken);
+            if (module == null) return null;
+            module.Name = dto.Name;
+            module.Description = dto.Description;
+            module.StartDate = dto.StartDate;
+            module.EndDate = dto.EndDate;
+            await _uow.CompleteAsync();
+            return new ModuleDto
+            {
+                Id = module.Id,
+                Name = module.Name,
+                Description = module.Description,
+                StartDate = module.StartDate,
+                EndDate = module.EndDate,
+                CourseId = module.CourseId
+            };
+        }
     }
 }
