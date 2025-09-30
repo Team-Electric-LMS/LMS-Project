@@ -133,7 +133,6 @@ namespace LMS.Services
             return activityDtos;
         }
 
-
         public async Task<IEnumerable<StudentDto>> GetCoursematesAsync(Guid studentId)
         {
             var student = await unitOfWork.Students.GetStudentByIdAsync(studentId);
