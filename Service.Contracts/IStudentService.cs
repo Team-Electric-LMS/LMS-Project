@@ -1,6 +1,7 @@
 ﻿using LMS.Shared.DTOs.ActivityDTOs;
 using LMS.Shared.DTOs.CourseDTOs;
 using LMS.Shared.DTOs.ModuleDTOs;
+using LMS.Shared.DTOs.UserDTOs;
 using System.Reflection;
 
 namespace Service.Contracts
