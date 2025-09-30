@@ -12,5 +12,6 @@ namespace Domain.Contracts.Repositories
         IQueryable<Module> GetAll(bool trackChanges = false);
         IQueryable<Module> GetByCourseId(Guid courseId, bool trackChanges = false);
         Task<Module?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
+        Task AddAsync(Module module, CancellationToken cancellationToken = default);
     }
 }
