@@ -132,6 +132,30 @@ namespace LMS.Services
 
             return activityDtos;
         }
+
+
+        public async Task<IEnumerable<StudentDto>> GetCoursematesAsync(Guid studentId)
+        {
+            var student = await unitOfWork.Students.GetStudentByIdAsync(studentId);
+            if (student == null || student.CourseId == null)
+            {
+                return Enumerable.Empty<StudentDto>();
+            }
+
+            var course = await unitOfWork.Courses.GetCourseWithStudentsAsync(student.CourseId.Value);
+            if (course == null || course.Students == null)
+                return Enumerable.Empty<StudentDto>();
+
+            var coursemates = course.Students
+                .Select(s => new StudentDto
+                {
+                    FirstName = s.FirstName ?? string.Empty,
+                    LastName = s.LastName ?? string.Empty,
+                    Email = s.Email ?? string.Empty,
+                })
+                .ToList();
+
+            return coursemates;
+        }
     }
-    
 }

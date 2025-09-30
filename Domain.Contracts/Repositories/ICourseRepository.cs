@@ -9,6 +9,7 @@ namespace Domain.Contracts.Repositories
     {
         Task<IEnumerable<Course>> GetAllAsync(bool trackchanges = false);
         Task<IEnumerable<Course>> GetCoursesByTeacherAsync(Guid teacherId);
+        Task<Course?> GetCourseWithStudentsAsync(Guid studentId);
         Task<Course?> GetCourseWithTeachersAsync(Guid courseId);
         Task<Course?> GetCourseByIdAsync(Guid id, bool trackChanges = false);
     }
