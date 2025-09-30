@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Domain.Contracts.Repositories;
+using Domain.Models.Entities;
 using LMS.Shared.DTOs.UserDTOs;
 using Service.Contracts;
 
@@ -61,22 +62,52 @@ public class UserService : IUserService
         return dtos;
     }
 
-    public async Task UpdateUserCourseAsync(string id, bool unassign, AddUserCourseByIdDto? dto, bool trackChanges = true)
+    public async Task UpdateUserCourseAsync(string id, bool unassign, AddUserCourseByIdDto? dto, bool trackChanges = false)
     {
-        var user = await uow.UserRepository.GetUserByIdAsync(id, trackChanges) ?? throw new Exception("User not found");
-        if (user == null) throw new($"User with id {id} was not found");
+        var user = await uow.UserRepository.GetUserWithCourseAsync(id, null, trackChanges: false)
+               ?? throw new Exception($"User with id {id} was not found");
 
-        if (unassign)
+        var roles = await uow.UserRepository.GetUsersRolesAsync(user)
+                    ?? throw new Exception("You need to assign a role first!");
+
+        if (roles.Contains("Student"))
         {
-            user.CourseId = null;
-            user.Course = null;
+            if (unassign)
+            {
+                user.CourseId = null;
+                user.Course = null;
+            }
+            else
+            {
+                if (dto == null) throw new ArgumentNullException(nameof(dto));
+                user.CourseId = dto.CourseId;
+            }
         }
-        else user.CourseId = dto.CourseId;
+        else if (roles.Contains("Teacher"))
+        {
+            if (dto == null) throw new ArgumentNullException(nameof(dto));
 
+            if (unassign)
+            {
+                var existingCourse = user.CoursesTaught.FirstOrDefault(c => c.Id == dto.CourseId);
+                if (existingCourse != null)
+                {
+                    user.CoursesTaught.Remove(existingCourse);
+                }
+            }
+            else
+            {
+                var course = await uow.Courses.GetCourseByIdAsync(dto.CourseId, trackChanges: true);
+
+                if (course != null && !user.CoursesTaught.Any(c => c.Id == dto.CourseId))
+                {
+                        course.Teachers.Add(user);
+                }
+            }
+        }
 
         await uow.CompleteAsync();
+
     }
-
-
 }
 
