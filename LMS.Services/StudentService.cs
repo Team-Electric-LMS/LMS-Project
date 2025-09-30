@@ -147,7 +147,6 @@ namespace LMS.Services
                 return Enumerable.Empty<StudentDto>();
 
             var coursemates = course.Students
-                //.Where(s => s.Id != studentId) // Compare Guid with Guid
                 .Select(s => new StudentDto
                 {
                     FirstName = s.FirstName ?? string.Empty,
