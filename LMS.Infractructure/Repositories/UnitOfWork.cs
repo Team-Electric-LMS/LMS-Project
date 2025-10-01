@@ -16,7 +16,7 @@ public class UnitOfWork : IUnitOfWork
     public IModuleRepository Modules => moduleRepository.Value;
 
     public UnitOfWork(ApplicationDbContext context, Lazy<IUserRepository> userRepository, Lazy<ICourseRepository> courseRepository,
-        Lazy<IStudentRepository> studentRepository)
+        Lazy<IStudentRepository> studentRepository, Lazy<IModuleRepository> moduleRepository)
     {
         this.context = context ?? throw new ArgumentNullException(nameof(context));
         this.userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
