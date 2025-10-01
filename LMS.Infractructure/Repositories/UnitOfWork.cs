@@ -6,21 +6,26 @@ public class UnitOfWork : IUnitOfWork
 {
     private readonly ApplicationDbContext context;
     private readonly Lazy<IUserRepository> userRepository;
+    private readonly Lazy<IActivityRepository> activityRepository;
     private readonly Lazy<ICourseRepository> courseRepository;
     private readonly Lazy<IStudentRepository> studentRepository;
-    private IModuleRepository? _modules;
-    public IModuleRepository Modules => _modules ??= new ModuleRepository(context);
+    private readonly Lazy<IModuleRepository> moduleRepository;
+
     public IUserRepository UserRepository => userRepository.Value;
+    public IActivityRepository ActivityRepository => activityRepository.Value;
     public ICourseRepository Courses => courseRepository.Value;
     public IStudentRepository Students => studentRepository.Value;
+    public IModuleRepository Modules => moduleRepository.Value;
 
     public UnitOfWork(ApplicationDbContext context, Lazy<IUserRepository> userRepository, Lazy<ICourseRepository> courseRepository,
-        Lazy<IStudentRepository> studentRepository)
+        Lazy<IStudentRepository> studentRepository, Lazy<IModuleRepository> moduleRepository, Lazy<IActivityRepository> activityRepository)
     {
         this.context = context ?? throw new ArgumentNullException(nameof(context));
         this.userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
         this.courseRepository = courseRepository ?? throw new ArgumentNullException(nameof(courseRepository));
         this.studentRepository = studentRepository ?? throw new ArgumentNullException(nameof(studentRepository));
+        this.moduleRepository = moduleRepository ?? throw new ArgumentNullException(nameof(moduleRepository));
+        this.activityRepository = activityRepository ?? throw new ArgumentNullException(nameof(activityRepository));
     }
     public async Task CompleteAsync() => await context.SaveChangesAsync();
 }

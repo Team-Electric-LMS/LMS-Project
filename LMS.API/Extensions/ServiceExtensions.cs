@@ -5,8 +5,6 @@ using LMS.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using Service.Contracts;
-using LMS.Shared.DTOs.CourseDTOs;
 
 namespace LMS.API.Extensions;
 
@@ -85,11 +83,17 @@ public static class ServiceExtensions
     {
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IUserRepository, UserRepository>();
-        services.AddScoped<ICourseRepository, CourseRepository>();
         services.AddScoped<IStudentRepository, StudentRepository>();
+        services.AddScoped<ICourseRepository, CourseRepository>();
+        services.AddScoped<IModuleRepository, ModuleRepository>();
+        services.AddScoped<IActivityRepository, ActivityRepository>();
+
+
         services.AddScoped(provider => new Lazy<IUserRepository>(() => provider.GetRequiredService<IUserRepository>()));
-        services.AddScoped(provider => new Lazy<ICourseRepository>(() => provider.GetRequiredService<ICourseRepository>()));
         services.AddScoped(provider => new Lazy<IStudentRepository>(() => provider.GetRequiredService<IStudentRepository>()));
+        services.AddScoped(provider => new Lazy<ICourseRepository>(() => provider.GetRequiredService<ICourseRepository>()));
+        services.AddScoped(provider => new Lazy<IModuleRepository>(() => provider.GetRequiredService<IModuleRepository>()));
+        services.AddScoped(provider => new Lazy<IActivityRepository>(() => provider.GetRequiredService<IActivityRepository>()));
     }
 
     public static void AddServiceLayer(this IServiceCollection services)
@@ -99,9 +103,13 @@ public static class ServiceExtensions
         services.AddScoped(provider => new Lazy<IAuthService>(() => provider.GetRequiredService<IAuthService>()));
         services.AddScoped<IUserService, UserService>();
         services.AddScoped(provider => new Lazy<IUserService>(() => provider.GetRequiredService<IUserService>()));
-        services.AddScoped<ICourseService, CourseService>();
-        services.AddScoped(provider => new Lazy<ICourseService>(() => provider.GetRequiredService<ICourseService>()));
         services.AddScoped<IStudentService, StudentService>();
         services.AddScoped(provider => new Lazy<IStudentService>(() => provider.GetRequiredService<IStudentService>()));
+        services.AddScoped<ICourseService, CourseService>();
+        services.AddScoped(provider => new Lazy<ICourseService>(() => provider.GetRequiredService<ICourseService>()));
+        services.AddScoped<IModuleService, ModuleService>();
+        services.AddScoped(provider => new Lazy<IModuleService>(() => provider.GetRequiredService<IModuleService>()));
+        services.AddScoped<IActivityService, ActivityService>();
+        services.AddScoped(provider => new Lazy<IActivityService>(() => provider.GetRequiredService<IActivityService>()));
     }
 }
