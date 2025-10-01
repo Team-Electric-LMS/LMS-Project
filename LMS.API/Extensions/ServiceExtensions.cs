@@ -83,13 +83,23 @@ public static class ServiceExtensions
 
     public static void AddRepositories(this IServiceCollection services)
     {
-        services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<ICourseRepository, CourseRepository>();
         services.AddScoped<IStudentRepository, StudentRepository>();
+        services.AddScoped<IModuleRepository, ModuleRepository>();
+
         services.AddScoped(provider => new Lazy<IUserRepository>(() => provider.GetRequiredService<IUserRepository>()));
         services.AddScoped(provider => new Lazy<ICourseRepository>(() => provider.GetRequiredService<ICourseRepository>()));
         services.AddScoped(provider => new Lazy<IStudentRepository>(() => provider.GetRequiredService<IStudentRepository>()));
+        services.AddScoped(provider => new Lazy<IModuleRepository>(() => provider.GetRequiredService<IModuleRepository>()));
+
+        services.AddScoped<IUnitOfWork>(provider => new UnitOfWork(
+            provider.GetRequiredService<ApplicationDbContext>(),
+            provider.GetRequiredService<Lazy<IUserRepository>>(),
+            provider.GetRequiredService<Lazy<ICourseRepository>>(),
+            provider.GetRequiredService<Lazy<IStudentRepository>>(),
+            provider.GetRequiredService<Lazy<IModuleRepository>>()
+        ));
     }
 
     public static void AddServiceLayer(this IServiceCollection services)
@@ -103,5 +113,7 @@ public static class ServiceExtensions
         services.AddScoped(provider => new Lazy<ICourseService>(() => provider.GetRequiredService<ICourseService>()));
         services.AddScoped<IStudentService, StudentService>();
         services.AddScoped(provider => new Lazy<IStudentService>(() => provider.GetRequiredService<IStudentService>()));
+        services.AddScoped<IModuleService, ModuleService>();
+        services.AddScoped(provider => new Lazy<IModuleService>(() => provider.GetRequiredService<IModuleService>()));
     }
 }
