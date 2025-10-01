@@ -9,6 +9,7 @@ using LMS.Shared.DTOs;
 using LMS.Shared.DTOs.ModuleDTOs;
 using Microsoft.EntityFrameworkCore;
 using Service.Contracts;
+using Domain.Models.Entities;
 
 namespace LMS.Services
 {
@@ -106,7 +107,7 @@ namespace LMS.Services
                 throw new Exception("The module dates must be within the course's active period.");
             }
 
-            var module = new Domain.Models.Entities.Module
+            var module = new Module
             {
                 Id = Guid.NewGuid(),
                 Name = dto.Name,
