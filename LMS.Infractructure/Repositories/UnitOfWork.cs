@@ -6,16 +6,17 @@ public class UnitOfWork : IUnitOfWork
 {
     private readonly ApplicationDbContext context;
     private readonly Lazy<IUserRepository> userRepository;
-    private readonly Lazy<IActivityRepository> activityRepository;
     private readonly Lazy<ICourseRepository> courseRepository;
     private readonly Lazy<IStudentRepository> studentRepository;
     private readonly Lazy<IModuleRepository> moduleRepository;
+    private readonly Lazy<IActivityRepository> activityRepository;
+
 
     public IUserRepository UserRepository => userRepository.Value;
-    public IActivityRepository ActivityRepository => activityRepository.Value;
     public ICourseRepository Courses => courseRepository.Value;
     public IStudentRepository Students => studentRepository.Value;
     public IModuleRepository Modules => moduleRepository.Value;
+    public IActivityRepository ActivityRepository => activityRepository.Value;
 
     public UnitOfWork(ApplicationDbContext context, Lazy<IUserRepository> userRepository, Lazy<ICourseRepository> courseRepository,
         Lazy<IStudentRepository> studentRepository, Lazy<IModuleRepository> moduleRepository, Lazy<IActivityRepository> activityRepository)
