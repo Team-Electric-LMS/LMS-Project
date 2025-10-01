@@ -74,6 +74,15 @@ namespace LMS.Services
 
         public async Task<ModuleDto> CreateModuleAsync(CreateModuleDto dto, CancellationToken cancellationToken = default)
         {
+            // Fetch the course
+            var course = await _uow.Courses.GetCourseByIdAsync(dto.CourseId, trackChanges: false);
+            if (course == null)
+                throw new Exception($"Course with id {dto.CourseId} not found.");
+
+            // Validate module dates
+            if (dto.StartDate < course.StartDate || dto.EndDate > course.EndDate)
+                throw new Exception("The module dates must be within the course's active period.");
+
             var module = new Domain.Models.Entities.Module
             {
                 Id = Guid.NewGuid(),
@@ -100,6 +109,16 @@ namespace LMS.Services
         {
             var module = await _uow.Modules.GetByIdAsync(moduleId, cancellationToken);
             if (module == null) return null;
+
+            // Fetch the course
+            var course = await _uow.Courses.GetCourseByIdAsync(module.CourseId, trackChanges: false);
+            if (course == null)
+                throw new Exception($"Course with id {module.CourseId} not found.");
+
+            // Validate module dates
+            if (dto.StartDate < course.StartDate || dto.EndDate > course.EndDate)
+                throw new Exception("The module dates must be within the course's active period.");
+
             module.Name = dto.Name;
             module.Description = dto.Description;
             module.StartDate = dto.StartDate;
