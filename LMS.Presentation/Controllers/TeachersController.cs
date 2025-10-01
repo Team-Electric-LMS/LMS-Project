@@ -65,8 +65,15 @@ public class TeachersController : ControllerBase
     {
         if (courseId != dto.CourseId)
             return BadRequest("CourseId in route and body must match.");
-        var module = await _serviceManager.ModuleService.CreateModuleAsync(dto);
-        return CreatedAtAction(nameof(GetModulesForCourse), new { courseId = module.CourseId }, module);
+        try
+        {
+            var module = await _serviceManager.ModuleService.CreateModuleAsync(dto);
+            return CreatedAtAction(nameof(GetModulesForCourse), new { courseId = module.CourseId }, module);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
     }
 
     // PUT: api/teachers/courses/{courseId}/modules/{moduleId}
@@ -77,7 +84,14 @@ public class TeachersController : ControllerBase
         var module = await _serviceManager.ModuleService.GetByIdAsync(moduleId);
         if (module == null || module.CourseId != courseId)
             return NotFound("Module not found for this course.");
-        var updated = await _serviceManager.ModuleService.UpdateModuleAsync(moduleId, dto);
-        return Ok(updated);
+        try
+        {
+            var updated = await _serviceManager.ModuleService.UpdateModuleAsync(moduleId, dto);
+            return Ok(updated);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
     }
 }
