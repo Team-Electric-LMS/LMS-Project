@@ -1,6 +1,4 @@
-﻿using Domain.Models.Entities;
-
-namespace LMS.Shared.DTOs.ActivityDTOs;
+﻿namespace LMS.Shared.DTOs.ActivityDTOs;
 
 public class CreateActivityDto
 {
