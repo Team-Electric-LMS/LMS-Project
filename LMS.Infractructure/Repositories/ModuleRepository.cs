@@ -28,5 +28,10 @@ namespace LMS.Infractructure.Repositories
 
         public Task<Module?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
             => _db.Modules.AsNoTracking().FirstOrDefaultAsync(m => m.Id == id, cancellationToken);
+
+        public async Task AddAsync(Module module, CancellationToken cancellationToken = default)
+        {
+            await _db.Modules.AddAsync(module, cancellationToken);
+        }
     }
 }
