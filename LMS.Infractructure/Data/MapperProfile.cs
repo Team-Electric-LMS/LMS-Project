@@ -25,5 +25,13 @@ public class MapperProfile : Profile
         CreateMap<UpdateCourseDto, Course>();
         CreateMap<CreateActivityDto, Activity>();
         CreateMap<UpdateActivityDto, Activity>();
+
+        // CreateMap<Activity, ActivityDto>()
+        //     .ForMember(d => d.ActivityTitle,    o => o.MapFrom(s => s.Name))
+        //     .ForMember(d => d.Description,      o => o.MapFrom(s => s.Description))
+        //     .ForMember(d => d.StartDate,        o => o.MapFrom(s => s.StartDate))
+        //     .ForMember(d => d.EndDate,          o => o.MapFrom(s => s.EndDate))
+        //     .ForMember(d => d.ActivityTypeName, o => o.MapFrom(s => s.ActivityType.Name));
+
     }
 }

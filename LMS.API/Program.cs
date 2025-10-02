@@ -29,6 +29,9 @@ public class Program
 
         builder.Services.AddScoped<IModuleService, ModuleService>();
 
+        builder.Services.AddScoped<IActivityRepository, ActivityRepository>();
+        builder.Services.AddScoped<IActivityService, ActivityService>();
+
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
