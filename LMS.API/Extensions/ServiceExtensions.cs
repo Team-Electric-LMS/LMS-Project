@@ -87,18 +87,21 @@ public static class ServiceExtensions
         services.AddScoped<ICourseRepository, CourseRepository>();
         services.AddScoped<IStudentRepository, StudentRepository>();
         services.AddScoped<IModuleRepository, ModuleRepository>();
+        services.AddScoped<IActivityRepository, ActivityRepository>();
 
         services.AddScoped(provider => new Lazy<IUserRepository>(() => provider.GetRequiredService<IUserRepository>()));
         services.AddScoped(provider => new Lazy<ICourseRepository>(() => provider.GetRequiredService<ICourseRepository>()));
         services.AddScoped(provider => new Lazy<IStudentRepository>(() => provider.GetRequiredService<IStudentRepository>()));
         services.AddScoped(provider => new Lazy<IModuleRepository>(() => provider.GetRequiredService<IModuleRepository>()));
+        services.AddScoped(provider => new Lazy<IActivityRepository>(() => provider.GetRequiredService<IActivityRepository>()));
 
         services.AddScoped<IUnitOfWork>(provider => new UnitOfWork(
             provider.GetRequiredService<ApplicationDbContext>(),
             provider.GetRequiredService<Lazy<IUserRepository>>(),
             provider.GetRequiredService<Lazy<ICourseRepository>>(),
             provider.GetRequiredService<Lazy<IStudentRepository>>(),
-            provider.GetRequiredService<Lazy<IModuleRepository>>()
+            provider.GetRequiredService<Lazy<IModuleRepository>>(),
+             provider.GetRequiredService<Lazy<IActivityRepository>>()
         ));
     }
 
@@ -115,5 +118,7 @@ public static class ServiceExtensions
         services.AddScoped(provider => new Lazy<IStudentService>(() => provider.GetRequiredService<IStudentService>()));
         services.AddScoped<IModuleService, ModuleService>();
         services.AddScoped(provider => new Lazy<IModuleService>(() => provider.GetRequiredService<IModuleService>()));
+        services.AddScoped<IActivityService, ActivityService>();
+        services.AddScoped(provider => new Lazy<IActivityService>(() => provider.GetRequiredService<IActivityService>()));
     }
 }
