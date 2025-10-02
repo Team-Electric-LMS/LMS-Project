@@ -118,7 +118,7 @@ namespace LMS.Services
             if (module == null)
                 return Enumerable.Empty<ActivityDto>();
 
-            var activityDtos = module.Activities.Select(activity => new ActivityDto
+            var activityDtos = module.Activities.Select(static activity => new ActivityDto
             {
                 Id = activity.Id,
                 ModuleId = activity.ModuleId,

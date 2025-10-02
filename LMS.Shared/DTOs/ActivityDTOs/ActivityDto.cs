@@ -16,5 +16,9 @@ namespace LMS.Shared.DTOs.ActivityDTOs
         public DateOnly StartDate { get; set; } //From EntityEdu
         public DateOnly EndDate { get; set; } //From EntityEdu
         public string ActivityTypeName { get; set; } = null!; //From ActivityType
+
+        public string Title { get; set; }
+        public DateTime? DueDate { get; set; }
+        public string Type { get; set; }
     }
 }

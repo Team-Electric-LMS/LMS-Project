@@ -3,6 +3,7 @@ using Domain.Models.Entities;
 using LMS.Shared.DTOs.AuthDtos;
 using LMS.Shared.DTOs.CourseDTOs;
 using LMS.Shared.DTOs.UserDTOs;
+using LMS.Shared.DTOs.ActivityDTOs;
 
 namespace LMS.Infractructure.Data;
 
@@ -21,5 +22,6 @@ public class MapperProfile : Profile
 
         CreateMap<CreateCourseDto, Course>();
         CreateMap<UpdateCourseDto, Course>();
+        CreateMap<Activity, ActivityDto>();
     }
 }

@@ -2,6 +2,7 @@ using LMS.API.Extensions;
 using LMS.API.Services;
 using LMS.Infractructure.Data;
 using LMS.Infractructure.Repositories;
+using LMS.Infrastructure.Repositories;
 using LMS.Services;
 using Service.Contracts;
 
@@ -28,6 +29,10 @@ public class Program
         builder.Services.ConfigureOpenApi();
 
         builder.Services.AddScoped<IModuleService, ModuleService>();
+        builder.Services.AddScoped<IActivityRepository, ActivityRepository>();
+        builder.Services.AddScoped<IActivityService, ActivityService>();
+
+
 
         var app = builder.Build();
 
