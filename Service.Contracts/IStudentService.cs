@@ -12,6 +12,6 @@ namespace Service.Contracts
         Task<IEnumerable<ModuleDto>> GetModulesForStudentAsync(Guid studentId);
         Task<CourseWithModulesDto?> GetCourseWithModulesForStudentAsync(Guid studentId);
         Task<IEnumerable<ActivityDto>> GetActivitiesForModuleAsync(Guid studentId, Guid moduleId);
-        Task<IEnumerable<StudentDto>> GetCoursematesAsync(Guid studentId);
+        Task<IEnumerable<CoursemateDto>> GetCoursematesAsync(Guid studentId);
     }
 }

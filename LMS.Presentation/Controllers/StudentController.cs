@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Contracts;
+using LMS.Shared.DTOs.UserDTOs;
 
 namespace LMS.Presentation.Controllers
 {
@@ -110,10 +111,10 @@ namespace LMS.Presentation.Controllers
         [HttpGet("{id}/course/students")]
         public async Task<IActionResult> GetCoursemates(Guid id)
         {
-            IEnumerable<StudentDto> studentDto = await serviceManager.StudentService.GetCoursematesAsync(id);
-            if (studentDto == null)
+            IEnumerable<CoursemateDto> coursemateDto = await serviceManager.StudentService.GetCoursematesAsync(id);
+            if (coursemateDto == null)
                 return NotFound($"No course mates found for student with id {id}");
-            return Ok(studentDto);
+            return Ok(coursemateDto);
 
         }
     }
