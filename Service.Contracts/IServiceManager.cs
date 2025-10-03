@@ -8,4 +8,5 @@ public interface IServiceManager
     IStudentService StudentService { get; }
     IModuleService ModuleService { get; }
     IActivityService ActivityService { get; }
+    IDocumentService DocumentService { get; }
 }
