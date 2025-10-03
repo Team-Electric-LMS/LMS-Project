@@ -37,4 +37,11 @@ public class CoursesController(IServiceManager serviceManager) : ControllerBase
         await serviceManager.CourseService.UpdateCourseAsync(id, updateCourseDto);
         return NoContent();
     }
+
+    [HttpGet("courses-tree")]
+    public async Task<ActionResult<IEnumerable<CourseIdNameDto>>> GetActiveCoursesTree()
+    {
+        var courses = await serviceManager.CourseService.GetActiveCoursesExtendedAsync();
+        return Ok(courses);
+    }
 }

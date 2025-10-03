@@ -1,8 +1,11 @@
 using AutoMapper;
 using Domain.Contracts.Repositories;
 using Domain.Models.Entities;
+using LMS.Infractructure.Repositories;
 using LMS.Shared.DTOs;
+using LMS.Shared.DTOs.ActivityDTOs;
 using LMS.Shared.DTOs.CourseDTOs;
+using LMS.Shared.DTOs.ModuleDTOs;
 using Service.Contracts;
 using System.Transactions;
 
@@ -70,4 +73,13 @@ public class CourseService : ICourseService
         _mapper.Map(updateCourseDto, course);
         await _unitOfWork.CompleteAsync();
     }
+
+    public async Task<IEnumerable<CourseIdNameDto>> GetActiveCoursesExtendedAsync()
+    {
+        var courses = await _unitOfWork.Courses.GetActiveCoursesExtendedAsync();
+        var dtos = _mapper.Map<List<CourseIdNameDto>>(courses);
+
+        return dtos;
+    }
+
 }

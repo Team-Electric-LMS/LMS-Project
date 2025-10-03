@@ -45,5 +45,21 @@ namespace LMS.Infractructure.Repositories
                 .FirstOrDefaultAsync(c => c.Id == courseId);
         }
 
+        public async Task<IEnumerable<Course>> GetActiveCoursesExtendedAsync(bool trackChanges = false)
+        {
+
+
+            var query = context.Courses.AsQueryable();
+            if (!trackChanges)
+                query = query.AsNoTracking();
+
+            query = query.Include(c => c.Modules)
+                    .ThenInclude(m => m.Activities);
+
+            query = query.Where(c => c.EndDate >= DateOnly.FromDateTime(DateTime.UtcNow)).OrderBy(d => d.StartDate);
+
+            return await query.ToListAsync();
+
+        }
     }
 }

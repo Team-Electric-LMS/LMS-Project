@@ -1,5 +1,4 @@
 ﻿using Bogus.DataSets;
-using LMS.Shared.DTOs.ForFrontEndTemplate;
 using LMS.Shared.DTOs.UserDTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;

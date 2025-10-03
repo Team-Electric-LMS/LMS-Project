@@ -3,6 +3,7 @@ using LMS.API.Services;
 using LMS.Infractructure.Data;
 using LMS.Infractructure.Repositories;
 using LMS.Services;
+using Microsoft.OpenApi.Models;
 using Service.Contracts;
 
 namespace LMS.API;
@@ -47,6 +48,7 @@ public class Program
         app.UseAuthentication();
         app.UseAuthorization();
 
+        app.UseStaticFiles();
         app.MapControllers();
 
         app.Run();
