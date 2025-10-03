@@ -70,4 +70,11 @@ public class CourseService : ICourseService
         _mapper.Map(updateCourseDto, course);
         await _unitOfWork.CompleteAsync();
     }
+
+    public async Task<IEnumerable<CourseIdNameDto>> GetActiveCoursesExtendedAsync()
+    {
+        var courses = await _unitOfWork.Courses.GetActiveCoursesExtendedAsync();
+        var dtos = _mapper.Map<List<CourseIdNameDto>>(courses);
+        return dtos;
+    }
 }
