@@ -1,7 +1,12 @@
 ﻿using LMS.Shared.DTOs.DocumentDTOs;
+using LMS.Shared.DTOs.UserDTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Service.Contracts;
+using Swashbuckle.AspNetCore.Annotations;
+using System.Buffers.Text;
+using System.Collections.Generic;
 
 namespace LMS.Presentation.Controllers;
 [ApiController]
@@ -10,6 +15,13 @@ public class DocumentsController(IServiceManager serviceManager) : ControllerBas
 {
 
     [HttpGet]
+    [Authorize]
+    [SwaggerOperation(
+        Summary = "Gets metadata for documents related to a course, module or activity",
+        Description = "Gets a list of Document Ids, Names, Links based for a specific course, module, activity by Id")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Documents data")]
+    [SwaggerResponse(StatusCodes.Status404NotFound)]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized, "Unauthorized - JWT token missing or invalid")]
     public async Task<IActionResult> GetDocuments([FromQuery] string level, [FromQuery] Guid id)
     {
         if (id == Guid.Empty)
@@ -19,8 +31,7 @@ public class DocumentsController(IServiceManager serviceManager) : ControllerBas
         {
             "course" => await serviceManager.DocumentService.GetDocumentsByCourseAsync(id),
             "module" => await serviceManager.DocumentService.GetDocumentsByModuleAsync(id),
-            "activity" => await serviceManager.DocumentService.GetDocumentsByActivityAsync(id),
-            _ => null
+            "activity" => await serviceManager.DocumentService.GetDocumentsByActivityAsync(id)
         };
 
         if (docs == null)
@@ -38,6 +49,7 @@ public class DocumentsController(IServiceManager serviceManager) : ControllerBas
 
     [ApiExplorerSettings(IgnoreApi = true)]
     [HttpPost("upload")]
+    [Authorize]
     public async Task<IActionResult> Upload([FromForm] IFormFile file, [FromForm] DocumentUploadDto dto)
     {
         if (file == null) return BadRequest("No file uploaded");
@@ -47,6 +59,13 @@ public class DocumentsController(IServiceManager serviceManager) : ControllerBas
     }
 
     [HttpGet("download/{id}")]
+    [Authorize]
+    [SwaggerOperation(
+        Summary = "Download a document by Id",
+        Description = "Download a document by Id")]
+    [SwaggerResponse(StatusCodes.Status200OK)]
+    [SwaggerResponse(StatusCodes.Status404NotFound)]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized, "Unauthorized - JWT token missing or invalid")]
     public async Task<IActionResult> Download(Guid id)
     {
         var result = await serviceManager.DocumentService.DownloadAsync(id);
