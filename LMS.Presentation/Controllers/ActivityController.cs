@@ -29,10 +29,12 @@ public class ActivityController : ControllerBase
         return Ok(activity);
     }
 
-    [HttpPut]
-    public async Task<ActionResult<ActivityDto>> UpdateActivity([FromBody] UpdateActivityDto updateActivityDto)
+    [HttpPut("{id:guid}")]
+    [Authorize(Roles = "Teacher")]
+    public async Task<ActionResult<ActivityDto>> UpdateActivity(Guid id, [FromBody] UpdateActivityDto updateActivityDto)
     {
-        await serviceManager.ActivityService.UpdateActivityAsync(updateActivityDto);
+        if (id != updateActivityDto.Id) return BadRequest();
+        await serviceManager.ActivityService.UpdateActivityAsync(id, updateActivityDto);
         return NoContent();
     }
 }

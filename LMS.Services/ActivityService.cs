@@ -18,39 +18,23 @@ public class ActivityService : IActivityService
         this.mapper = mapper;
         this.repo = repo;
     }
-    public async Task<ActivityDto> GetActivityAsync(Guid id, CancellationToken ct = default)
+    public async Task<ActivityDto> GetActivityAsync(Guid id)
     {
         var activity = await uow.ActivityRepository.GetEntityByIdAsync(id, trackChanges: true);
         return activity == null ? throw new ArgumentException("Course not found") : mapper.Map<ActivityDto>(activity);
     }
 
-    public async Task<ActivityDto> CreateActivityAsync(CreateActivityDto createActivityDto, CancellationToken ct = default)
+    public async Task<ActivityDto> CreateActivityAsync(CreateActivityDto createActivityDto)
     {
         var activity = mapper.Map<Activity>(createActivityDto);
-        var type = await uow.ActivityRepository.GetTypeByNameAsync(createActivityDto.ActivityTypeName);
-        if (type == null) throw new Exception($"Activity type '{createActivityDto.ActivityTypeName}' not found.");
-
-        activity.ActivityTypeId = type.Id;
-
         uow.ActivityRepository.Create(activity);
         await uow.CompleteAsync();
         return mapper.Map<ActivityDto>(activity);
     }
-    public async Task UpdateActivityAsync(UpdateActivityDto updateActivityDto, CancellationToken ct = default)
+    public async Task UpdateActivityAsync(Guid id, UpdateActivityDto updateActivityDto)
     {
-        var activity = await uow.ActivityRepository.GetEntityByIdAsync(updateActivityDto.Id, trackChanges: true);
+        var activity = await uow.ActivityRepository.GetEntityByIdAsync(id, trackChanges: true);
         mapper.Map(updateActivityDto, activity);
-
-        // Validate activity dates
-        if (updateActivityDto.StartDate < activity.Module.StartDate || updateActivityDto.EndDate > activity.Module.EndDate)
-        {
-            throw new Exception("The activity dates must be within the modules's active period.");
-        }
-        
-       var type = await uow.ActivityRepository.GetTypeByNameAsync(updateActivityDto.ActivityTypeName);
-       activity.ActivityTypeId = type.Id;
-        
-
         await uow.CompleteAsync();
     }
 

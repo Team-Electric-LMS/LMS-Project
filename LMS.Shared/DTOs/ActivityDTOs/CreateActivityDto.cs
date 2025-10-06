@@ -7,5 +7,5 @@ public class CreateActivityDto
     public DateOnly StartDate { get; set; }
     public DateOnly EndDate { get; set; }
     public Guid ModuleId { get; set; }
-    public string ActivityTypeName { get; set; } = null!;
+    public Guid ActivityTypeId { get; set; }
 }

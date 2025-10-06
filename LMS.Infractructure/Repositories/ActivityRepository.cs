@@ -23,9 +23,4 @@ public class ActivityRepository : RepositoryBase<Activity>, IActivityRepository
              .Where(a => a.ModuleId == moduleId)
              .OrderBy(a => a.StartDate)
              .ToListAsync(ct);
-
-    public async Task<ActivityType?> GetTypeByNameAsync(string name, CancellationToken ct = default)
-    => await _db.ActivityTypes
-        .AsNoTracking()
-        .FirstOrDefaultAsync(t => t.Name == name, ct);
 }

@@ -7,5 +7,6 @@ public class UpdateActivityDto
     public string Description { get; set; } = null!;
     public DateOnly StartDate { get; set; }
     public DateOnly EndDate { get; set; }
-    public string ActivityTypeName { get; set; } = null!;
+    public Guid ModuleId { get; set; }
+    public Guid ActivityTypeId { get; set; }
 }
