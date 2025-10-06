@@ -72,7 +72,18 @@ public class DocumentService : IDocumentService
         var file = await _fileStorage.GetFileAsync(doc.Link, doc.Name);
         if (file == null) return null;
 
-        return new FileStreamResult(file.Value.Stream, "application/octet-stream")
+        var ext = Path.GetExtension(doc.Link).ToLower();
+        var contentType = ext switch
+        {
+            ".pdf" => "application/pdf",
+            ".jpg" => "image/jpeg",
+            ".jpeg" => "image/jpeg",
+            ".png" => "image/png",
+            ".txt" => "text/plain",
+            _ => "application/octet-stream"
+        };
+
+        return new FileStreamResult(file.Value.Stream, contentType)
         {
             FileDownloadName = file.Value.FileName
         };
