@@ -38,5 +38,15 @@ namespace LMS.API.Controllers
             var dto = await _moduleService.GetByIdAsync(id, cancellationToken);
             return dto is null ? NotFound() : Ok(dto);
         }
+
+        /// <summary>Updates an existing module by id.</summary>
+        [HttpPut("{id:guid}")]
+        [ProducesResponseType(typeof(ModuleDto), 200)]
+        [ProducesResponseType(404)]
+        public async Task<ActionResult<ModuleDto>> Update(Guid id, [FromBody] UpdateModuleDto dto, CancellationToken cancellationToken)
+        {
+            var updatedModule = await _moduleService.UpdateModuleAsync(id, dto, cancellationToken);
+            return updatedModule is null ? NotFound() : Ok(updatedModule);
+        }
     }
 }

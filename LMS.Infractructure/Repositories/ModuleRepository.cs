@@ -27,7 +27,7 @@ namespace LMS.Infractructure.Repositories
                 .Where(m => m.CourseId == courseId);
 
         public Task<Module?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
-            => _db.Modules.AsNoTracking().FirstOrDefaultAsync(m => m.Id == id, cancellationToken);
+            => _db.Modules.FirstOrDefaultAsync(m => m.Id == id, cancellationToken);
 
         public async Task AddAsync(Module module, CancellationToken cancellationToken = default)
         {
