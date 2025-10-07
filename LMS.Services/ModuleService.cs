@@ -133,7 +133,7 @@ namespace LMS.Services
         public async Task<ModuleDto?> UpdateModuleAsync(Guid moduleId, UpdateModuleDto dto, CancellationToken cancellationToken = default)
         {
             // Log incoming DTO
-            Console.WriteLine($"[UpdateModuleAsync] DTO: Name={dto.Name}, Description={dto.Description}, StartDate={dto.StartDate}, EndDate={dto.EndDate}");
+            Console.WriteLine($"[UpdateModuleAsync] DTO: Name={dto.Name}, Description={dto.Description}, StartDate={dto.StartDate}, EndDate={dto.EndDate}, CourseId={dto.CourseId}");
 
             // Validate incoming dates
             if (dto.StartDate == DateOnly.MinValue || dto.EndDate == DateOnly.MinValue)
@@ -143,14 +143,15 @@ namespace LMS.Services
             }
 
             var module = await _uow.Modules.GetByIdAsync(moduleId, cancellationToken);
-            Console.WriteLine($"[UpdateModuleAsync] Fetched module: {(module == null ? "null" : module.Name)}, StartDate={module?.StartDate}, EndDate={module?.EndDate}");
+            Console.WriteLine($"[UpdateModuleAsync] Fetched module: {(module == null ? "null" : module.Name)}, StartDate={module?.StartDate}, EndDate={module?.EndDate}, CourseId={module?.CourseId}");
             if (module == null) return null;
 
-            // Fetch the course
-            var course = await _uow.Courses.GetCourseByIdAsync(module.CourseId, trackChanges: false);
+            // If CourseId is changed, fetch and validate the new course
+            Guid targetCourseId = dto.CourseId != Guid.Empty ? dto.CourseId : module.CourseId;
+            var course = await _uow.Courses.GetCourseByIdAsync(targetCourseId, trackChanges: false);
             Console.WriteLine($"[UpdateModuleAsync] Fetched course: {(course == null ? "null" : course.Name)}, StartDate={course?.StartDate}, EndDate={course?.EndDate}");
             if (course == null)
-                throw new Exception($"Course with id {module.CourseId} not found.");
+                throw new Exception($"Course with id {targetCourseId} not found.");
 
             // Validate course dates
             if (course.StartDate == DateOnly.MinValue || course.EndDate == DateOnly.MinValue)
@@ -170,8 +171,12 @@ namespace LMS.Services
             module.Description = dto.Description;
             module.StartDate = dto.StartDate;
             module.EndDate = dto.EndDate;
+            if (dto.CourseId != Guid.Empty && dto.CourseId != module.CourseId)
+            {
+                module.CourseId = dto.CourseId;
+            }
             await _uow.CompleteAsync();
-            Console.WriteLine($"[UpdateModuleAsync] Module updated: Id={module.Id}, Name={module.Name}");
+            Console.WriteLine($"[UpdateModuleAsync] Module updated: Id={module.Id}, Name={module.Name}, CourseId={module.CourseId}");
             return new ModuleDto
             {
                 Id = module.Id,
