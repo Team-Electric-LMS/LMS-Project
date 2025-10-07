@@ -25,10 +25,6 @@ public class MapperProfile : Profile
         CreateMap<CreateCourseDto, Course>();
         CreateMap<UpdateCourseDto, Course>();
         CreateMap<CreateActivityDto, Activity>();
-        CreateMap<UpdateActivityDto, Activity>()
-            .ForMember(dest => dest.Module, opt => opt.Ignore())
-            .ForMember(dest => dest.ModuleId, opt => opt.Ignore());
-
-
+        CreateMap<UpdateActivityDto, Activity>();
     }
 }
