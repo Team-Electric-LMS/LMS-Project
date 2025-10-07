@@ -2,6 +2,7 @@
 using Domain.Contracts.Repositories;
 using Domain.Models.Entities;
 using LMS.Shared.DTOs.ActivityDTOs;
+using LMS.Shared.DTOs.UserDTOs;
 using Service.Contracts;
 
 namespace LMS.Services;
@@ -40,18 +41,19 @@ public class ActivityService : IActivityService
     {
         var activity = await uow.ActivityRepository.GetEntityByIdAsync(updateActivityDto.Id, trackChanges: true);
         mapper.Map(updateActivityDto, activity);
-
-        // Validate activity dates
-        if (updateActivityDto.StartDate < activity.Module.StartDate || updateActivityDto.EndDate > activity.Module.EndDate)
-        {
-            throw new Exception("The activity dates must be within the modules's active period.");
-        }
         
        var type = await uow.ActivityRepository.GetTypeByNameAsync(updateActivityDto.ActivityTypeName);
        activity.ActivityTypeId = type.Id;
         
 
         await uow.CompleteAsync();
+    }
+    public async Task<IEnumerable<UpdateActivityDto>> GetByModuleIdAsync(Guid moduleId, CancellationToken ct = default)
+    {
+        var activities = await uow.ActivityRepository.GetByModuleIdAsync(moduleId, ct);
+        var dtos = activities.Select(a => mapper.Map<UpdateActivityDto>(a)).ToList();
+
+        return dtos;
     }
 
     public async Task<IReadOnlyList<ActivityDto>> GetByModuleAsync(Guid moduleId, CancellationToken ct = default)
