@@ -22,17 +22,16 @@ public class MapperProfile : Profile
         CreateMap<ApplicationUser, UserRegistrationDto>();
         CreateMap<Course, CourseDto>();
         CreateMap<Activity, ActivityDto>();
+        CreateMap<Activity, UpdateActivityDto>();
 
         CreateMap<CreateCourseDto, Course>();
         CreateMap<UpdateCourseDto, Course>();
         CreateMap<CreateActivityDto, Activity>();
         CreateMap<UpdateActivityDto, Activity>();
-
         CreateMap<DocumentUploadDto, Document>()
             .ForMember(d => d.Link, opt => opt.Ignore())
             .ForMember(d => d.UploadDate, opt => opt.Ignore()); ;
         CreateMap<Document, DocumentDto>().ReverseMap();
-
         CreateMap<Activity, ActivityIdNameDto>();
         CreateMap<Module, ModuleIdNameDto>();
         CreateMap<Course, CourseIdNameDto>();
