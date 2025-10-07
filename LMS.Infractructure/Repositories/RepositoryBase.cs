@@ -1,7 +1,7 @@
 ﻿using Domain.Contracts.Repositories;
 using Domain.Models.Entities;
 using LMS.Infractructure.Data;
-using Microsoft.AspNetCore.Identity;
+using LMS.Shared.Parameters;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
@@ -32,4 +32,7 @@ public abstract class RepositoryBase<T> : IRepositoryBase<T>, IInternalRepositor
     public async Task<bool> EntityExistsAsync(Guid id) => await DbSet.AnyAsync(m => m.Id == id);
     public async Task<T?> GetEntityByIdAsync(Guid id, bool trackChanges = false)
             => await FindByCondition(e => e.Id == id, trackChanges).FirstOrDefaultAsync();
+
+    public async Task<PagedList<T>> GetPagedAsync(EntityParameters parameters, bool trackChanges = false)
+           => await PagedList<T>.PageAsync(FindAll(trackChanges), parameters.PageNumber, parameters.PageSize);
 }

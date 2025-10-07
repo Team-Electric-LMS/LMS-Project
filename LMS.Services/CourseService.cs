@@ -1,10 +1,9 @@
 using AutoMapper;
 using Domain.Contracts.Repositories;
 using Domain.Models.Entities;
-using LMS.Shared.DTOs;
 using LMS.Shared.DTOs.CourseDTOs;
+using LMS.Shared.Parameters;
 using Service.Contracts;
-using System.Transactions;
 
 namespace LMS.Services;
 // Service for managing course-related operations
@@ -27,8 +26,8 @@ public class CourseService : ICourseService
 
     public async Task<IEnumerable<CourseDto>> GetAllCoursesAsync()
     {
-            var courses = await _unitOfWork.Courses.GetAllAsync();
-            return courses.Select(c => _mapper.Map<CourseDto>(c));
+        var courses = await _unitOfWork.Courses.GetAllAsync();
+        return courses.Select(c => _mapper.Map<CourseDto>(c));
     }
 
     // Fetch courses by teacher ID
@@ -63,7 +62,7 @@ public class CourseService : ICourseService
         await _unitOfWork.CompleteAsync();
         return _mapper.Map<CourseDto>(course);
     }
-    
+
     public async Task UpdateCourseAsync(Guid id, UpdateCourseDto updateCourseDto)
     {
         var course = await _unitOfWork.Courses.GetCourseByIdAsync(id, trackChanges: true);
@@ -76,5 +75,25 @@ public class CourseService : ICourseService
         var courses = await _unitOfWork.Courses.GetActiveCoursesExtendedAsync();
         var dtos = _mapper.Map<List<CourseIdNameDto>>(courses);
         return dtos;
+    }
+
+    public async Task<PagedList<CourseDto>> GetCoursesPagedAsync(CourseParameters parameters, bool trackChanges = false)
+    {
+        if (parameters.StartDate.HasValue && parameters.EndDate.HasValue)
+        {
+            if (parameters.StartDate > parameters.EndDate)
+            {
+                throw new ArgumentException("Start Date cannot be later than End Date.");
+            }
+        }
+
+        var courses = await _unitOfWork.Courses.GetAllPagedAsync(parameters, trackChanges);
+        var dtos = courses.Select(c => _mapper.Map<CourseDto>(c)).ToList();
+
+        return new PagedList<CourseDto>(
+        dtos,
+        courses.TotalCount,
+        courses.CurrentPage,
+        courses.PageSize);
     }
 }
