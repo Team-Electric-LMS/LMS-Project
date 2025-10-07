@@ -27,8 +27,8 @@ public class CourseService : ICourseService
 
     public async Task<IEnumerable<CourseDto>> GetAllCoursesAsync()
     {
-            var courses = await _unitOfWork.Courses.GetAllAsync();
-            return courses.Select(c => _mapper.Map<CourseDto>(c));
+        var courses = await _unitOfWork.Courses.GetAllAsync();
+        return courses.Select(c => _mapper.Map<CourseDto>(c));
     }
 
     // Fetch courses by teacher ID
@@ -69,5 +69,11 @@ public class CourseService : ICourseService
         var course = await _unitOfWork.Courses.GetCourseByIdAsync(id, trackChanges: true);
         _mapper.Map(updateCourseDto, course);
         await _unitOfWork.CompleteAsync();
+    }
+
+    public async Task<IEnumerable<CourseDto>> SearchCourseByNameAsync(string query)
+    {
+        var courses = await _unitOfWork.Courses.SearchCoursesByNameAsync(query);
+        return courses.Select(c => _mapper.Map<CourseDto>(c));
     }
 }

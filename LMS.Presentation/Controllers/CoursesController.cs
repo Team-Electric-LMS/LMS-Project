@@ -18,6 +18,10 @@ public class CoursesController(IServiceManager serviceManager) : ControllerBase
      Description = "Returns all courses, no filters")]
     public async Task<ActionResult<IEnumerable<CourseDto>>> GetAlCoursesAsync() => Ok((IEnumerable<CourseDto>)await serviceManager.CourseService.GetAllCoursesAsync());
 
+    [HttpGet("search")]
+    [Authorize(Roles = "Teacher")]
+    public async Task<ActionResult<IEnumerable<CourseDto>>> SearchCoursesAsync([FromQuery] string? query) => Ok(await serviceManager.CourseService.SearchCourseByNameAsync(query ?? string.Empty));
+
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<CourseDto>> GetCourse(Guid id) => Ok(await serviceManager.CourseService.GetCourseAsync(id));
 
