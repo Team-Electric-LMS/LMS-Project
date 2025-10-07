@@ -149,7 +149,6 @@ namespace LMS.Services
             var coursemates = course.Students
                 .Select(s => new CoursemateDto
                 {
-                    UserName = s.UserName ?? string.Empty,
                     FirstName = s.FirstName ?? string.Empty,
                     LastName = s.LastName ?? string.Empty,
                     Email = s.Email ?? string.Empty,
