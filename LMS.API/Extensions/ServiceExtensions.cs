@@ -1,12 +1,13 @@
-﻿using LMS.Infractructure.Data;
+﻿using LMS.API.Services;
+using LMS.Infractructure.Data;
 using LMS.Infractructure.Repositories;
 using LMS.Presentation;
 using LMS.Services;
+using LMS.Shared.DTOs.CourseDTOs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Service.Contracts;
-using LMS.Shared.DTOs.CourseDTOs;
 
 namespace LMS.API.Extensions;
 
@@ -88,12 +89,14 @@ public static class ServiceExtensions
         services.AddScoped<IStudentRepository, StudentRepository>();
         services.AddScoped<IModuleRepository, ModuleRepository>();
         services.AddScoped<IActivityRepository, ActivityRepository>();
+        services.AddScoped<IDocumentRepository, DocumentRepository>();
 
         services.AddScoped(provider => new Lazy<IUserRepository>(() => provider.GetRequiredService<IUserRepository>()));
         services.AddScoped(provider => new Lazy<ICourseRepository>(() => provider.GetRequiredService<ICourseRepository>()));
         services.AddScoped(provider => new Lazy<IStudentRepository>(() => provider.GetRequiredService<IStudentRepository>()));
         services.AddScoped(provider => new Lazy<IModuleRepository>(() => provider.GetRequiredService<IModuleRepository>()));
         services.AddScoped(provider => new Lazy<IActivityRepository>(() => provider.GetRequiredService<IActivityRepository>()));
+        services.AddScoped(provider => new Lazy<IDocumentRepository>(() => provider.GetRequiredService<IDocumentRepository>()));
 
         services.AddScoped<IUnitOfWork>(provider => new UnitOfWork(
             provider.GetRequiredService<ApplicationDbContext>(),
@@ -101,7 +104,8 @@ public static class ServiceExtensions
             provider.GetRequiredService<Lazy<ICourseRepository>>(),
             provider.GetRequiredService<Lazy<IStudentRepository>>(),
             provider.GetRequiredService<Lazy<IModuleRepository>>(),
-             provider.GetRequiredService<Lazy<IActivityRepository>>()
+            provider.GetRequiredService<Lazy<IActivityRepository>>(),
+            provider.GetRequiredService<Lazy<IDocumentRepository>>()
         ));
     }
 
@@ -120,5 +124,9 @@ public static class ServiceExtensions
         services.AddScoped(provider => new Lazy<IModuleService>(() => provider.GetRequiredService<IModuleService>()));
         services.AddScoped<IActivityService, ActivityService>();
         services.AddScoped(provider => new Lazy<IActivityService>(() => provider.GetRequiredService<IActivityService>()));
+        services.AddScoped<IDocumentService, DocumentService>();
+        services.AddScoped(provider => new Lazy<IDocumentService>(() => provider.GetRequiredService<IDocumentService>()));
+        services.AddScoped<IFileStorageService, FileStorageService>();
+        services.AddScoped(provider => new Lazy<IFileStorageService>(() => provider.GetRequiredService<IFileStorageService>()));
     }
 }

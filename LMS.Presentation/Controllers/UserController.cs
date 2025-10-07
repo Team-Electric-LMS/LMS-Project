@@ -1,12 +1,9 @@
-﻿using Bogus.DataSets;
-using LMS.Shared.DTOs.ForFrontEndTemplate;
-using LMS.Shared.DTOs.UserDTOs;
+﻿using LMS.Shared.DTOs.UserDTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Service.Contracts;
 using Swashbuckle.AspNetCore.Annotations;
-using System.Security.Claims;
 
 namespace LMS.Presentation.Controllers;
 
@@ -50,7 +47,7 @@ public class UserController : ControllerBase
         var res = await serviceManager.UserService.GetUserByIdentityName(UserName);
         if (res == null) return NotFound(new { message = $"User '{UserName}' was not found." });
 
-       return Ok(res);
+        return Ok(res);
     }
 
     [HttpGet("extended")]
@@ -64,9 +61,9 @@ public class UserController : ControllerBase
     [SwaggerResponse(StatusCodes.Status401Unauthorized, "Unauthorized - JWT token missing or invalid")]
     //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 
-    public async Task<ActionResult<UserDto>> GetUserWithCourse([FromQuery] string? id, [FromQuery] string? email,  [FromQuery] bool trackChanges = false)
+    public async Task<ActionResult<UserDto>> GetUserWithCourse([FromQuery] string? id, [FromQuery] string? email, [FromQuery] bool trackChanges = false)
     {
-        if (string.IsNullOrEmpty(id) && string.IsNullOrEmpty(email))  return BadRequest("Either id or name must be provided.");
+        if (string.IsNullOrEmpty(id) && string.IsNullOrEmpty(email)) return BadRequest("Either id or name must be provided.");
         var user = await serviceManager.UserService.GetUserWithCourse(id, email, trackChanges);
         if (user == null) return NotFound($"User with {(id != null ? $"id {id}" : $"name {email}")} was not found.");
         return Ok(user);
