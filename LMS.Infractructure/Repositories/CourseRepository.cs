@@ -46,6 +46,16 @@ namespace LMS.Infractructure.Repositories
                 .FirstOrDefaultAsync(c => c.Id == courseId);
         }
 
+        public async Task<IEnumerable<Course>> SearchCoursesByNameAsync(string searchTerm, bool trackChanges = false) 
+        {
+            if (string.IsNullOrWhiteSpace(searchTerm)) return await GetAllAsync(trackChanges);
+
+            var query = context.Courses.AsQueryable();
+            if (!trackChanges) query = query.AsNoTracking();
+            
+            return await query.Where(course => course.Name.Contains(searchTerm)).ToListAsync();
+        }
+
         public async Task<IEnumerable<Course>> GetActiveCoursesExtendedAsync(bool trackChanges = false)
         {
             var query = context.Courses.AsQueryable();
@@ -57,6 +67,7 @@ namespace LMS.Infractructure.Repositories
 
             return await query.ToListAsync();
         }
+
 
         public async Task<PagedList<Course>> GetAllPagedAsync(CourseParameters parameters, bool trackChanges = false)
         {
