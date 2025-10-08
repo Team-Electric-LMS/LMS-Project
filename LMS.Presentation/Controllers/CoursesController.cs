@@ -77,6 +77,8 @@ public class CoursesController(IServiceManager serviceManager) : ControllerBase
             var paginationMetadata = new { courses.TotalCount, courses.CurrentPage, courses.PageSize, courses.TotalPages, courses.HasNext, courses.HasPrevious };
 
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(paginationMetadata));
+            Response.Headers.Add("Access-Control-Expose-Headers", "X-Pagination");
+
 
             return Ok(courses);
         }
