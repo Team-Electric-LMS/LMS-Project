@@ -76,4 +76,11 @@ public class CourseService : ICourseService
         var courses = await _unitOfWork.Courses.SearchCoursesByNameAsync(query);
         return courses.Select(c => _mapper.Map<CourseDto>(c));
     }
+    
+    public async Task<IEnumerable<CourseIdNameDto>> GetActiveCoursesExtendedAsync()
+    {
+        var courses = await _unitOfWork.Courses.GetActiveCoursesExtendedAsync();
+        var dtos = _mapper.Map<List<CourseIdNameDto>>(courses);
+        return dtos;
+    }
 }

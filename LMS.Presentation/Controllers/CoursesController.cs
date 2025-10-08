@@ -1,5 +1,7 @@
 ﻿using LMS.Shared.DTOs.CourseDTOs;
+using LMS.Shared.DTOs.UserDTOs;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Service.Contracts;
 using Swashbuckle.AspNetCore.Annotations;
@@ -40,5 +42,18 @@ public class CoursesController(IServiceManager serviceManager) : ControllerBase
         if (id != updateCourseDto.Id) return BadRequest();
         await serviceManager.CourseService.UpdateCourseAsync(id, updateCourseDto);
         return NoContent();
+    }
+
+    [HttpGet("courses-tree")]
+    [Authorize(Roles = "Teacher")]
+    [SwaggerOperation(
+        Summary = "Gets Course-Modules-Activities data",
+        Description = "Gets a json with Course-Modules-Activities data for courses which en date has not yet passsed.")]
+    [SwaggerResponse(StatusCodes.Status200OK)]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized, "Unauthorized - JWT token missing or invalid")]
+    public async Task<ActionResult<IEnumerable<CourseIdNameDto>>> GetActiveCoursesTree()
+    {
+        var courses = await serviceManager.CourseService.GetActiveCoursesExtendedAsync();
+        return Ok(courses);
     }
 }

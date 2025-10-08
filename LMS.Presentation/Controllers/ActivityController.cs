@@ -20,6 +20,11 @@ public class ActivityController : ControllerBase
     [Authorize]
     public async Task<ActionResult<ActivityDto>> GetActivity(Guid id) => Ok(await serviceManager.ActivityService.GetActivityAsync(id));
 
+    [HttpGet("module/{moduleId:guid}")]
+    [Authorize]
+    public async Task<ActionResult<IEnumerable<UpdateActivityDto>>> GetActivities(Guid moduleId, CancellationToken ct)
+       => Ok(await serviceManager.ActivityService.GetByModuleIdAsync(moduleId, ct));
+
 
     [HttpPost]
     [Authorize(Roles = "Teacher")]
@@ -29,12 +34,11 @@ public class ActivityController : ControllerBase
         return Ok(activity);
     }
 
-    [HttpPut("{id:guid}")]
-    [Authorize(Roles = "Teacher")]
-    public async Task<ActionResult<ActivityDto>> UpdateActivity(Guid id, [FromBody] UpdateActivityDto updateActivityDto)
+    [HttpPut]
+    [Authorize]
+    public async Task<ActionResult<ActivityDto>> UpdateActivity([FromBody] UpdateActivityDto updateActivityDto)
     {
-        if (id != updateActivityDto.Id) return BadRequest();
-        await serviceManager.ActivityService.UpdateActivityAsync(id, updateActivityDto);
+        await serviceManager.ActivityService.UpdateActivityAsync(updateActivityDto);
         return NoContent();
     }
 }
