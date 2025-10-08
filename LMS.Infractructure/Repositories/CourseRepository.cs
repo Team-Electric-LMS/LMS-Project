@@ -1,7 +1,8 @@
 using Domain.Contracts.Repositories;
 using Domain.Models.Entities;
-using Microsoft.EntityFrameworkCore;
 using LMS.Infractructure.Data;
+using LMS.Shared.Parameters;
+using Microsoft.EntityFrameworkCore;
 
 namespace LMS.Infractructure.Repositories
 {
@@ -65,6 +66,28 @@ namespace LMS.Infractructure.Repositories
                     .ThenInclude(m => m.Activities).Where(c => c.EndDate >= DateOnly.FromDateTime(DateTime.UtcNow)).OrderBy(d => d.StartDate);
 
             return await query.ToListAsync();
+        }
+
+
+        public async Task<PagedList<Course>> GetAllPagedAsync(CourseParameters parameters, bool trackChanges = false)
+        {
+            var query = FindAll(trackChanges);
+
+            if (!string.IsNullOrWhiteSpace(parameters.Name))
+                query = query.Where(m => m.Name == parameters.Name.Trim());
+
+            if (!string.IsNullOrWhiteSpace(parameters.SearchQuery))
+                query = query.Where(m =>
+                    m.Name.Contains(parameters.SearchQuery.Trim()));
+
+            if (parameters.StartDate.HasValue)
+                query = query.Where(m => m.EndDate >= parameters.StartDate.Value);
+            if (parameters.EndDate.HasValue)
+                query = query.Where(m => m.EndDate <= parameters.EndDate.Value);
+
+            query = query.OrderBy(m => m.StartDate);
+
+            return await PagedList<Course>.PageAsync(query, parameters.PageNumber, parameters.PageSize);
         }
     }
 }

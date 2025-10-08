@@ -1,4 +1,5 @@
 using LMS.Shared.DTOs.CourseDTOs;
+using LMS.Shared.Parameters;
 
 namespace Service.Contracts;
 // Service contract for course-related operations
@@ -11,4 +12,5 @@ public interface ICourseService
     Task UpdateCourseAsync(Guid id, UpdateCourseDto updateCourseDto);
     Task<IEnumerable<CourseDto>> SearchCourseByNameAsync(string query);
     Task<IEnumerable<CourseIdNameDto>> GetActiveCoursesExtendedAsync();
+    Task<PagedList<CourseDto>> GetCoursesPagedAsync(CourseParameters parameters, bool trackChanges = false);
 }

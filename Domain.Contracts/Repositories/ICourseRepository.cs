@@ -1,7 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Domain.Models.Entities;
+using LMS.Shared.Parameters;
 
 namespace Domain.Contracts.Repositories
 {
@@ -14,5 +12,6 @@ namespace Domain.Contracts.Repositories
         Task<Course?> GetCourseByIdAsync(Guid id, bool trackChanges = false);
         Task<IEnumerable<Course>> SearchCoursesByNameAsync(string searchTerm, bool trackChanges = false);
         Task<IEnumerable<Course>> GetActiveCoursesExtendedAsync(bool trackChanges = false);
+        Task<PagedList<Course>> GetAllPagedAsync(CourseParameters parameters, bool trackChanges = false);
     }
 }

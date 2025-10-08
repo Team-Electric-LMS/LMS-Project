@@ -1,10 +1,11 @@
 ﻿using LMS.Shared.DTOs.CourseDTOs;
-using LMS.Shared.DTOs.UserDTOs;
+using LMS.Shared.Parameters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Service.Contracts;
 using Swashbuckle.AspNetCore.Annotations;
+using System.Text.Json;
 
 namespace LMS.Presentation.Controllers;
 
@@ -56,4 +57,43 @@ public class CoursesController(IServiceManager serviceManager) : ControllerBase
         var courses = await serviceManager.CourseService.GetActiveCoursesExtendedAsync();
         return Ok(courses);
     }
+
+    [HttpGet("archive")]
+    [Authorize(Roles = "Teacher")]
+    [SwaggerOperation(
+    Summary = "Retrieve paged list of courses",
+    Description = @"Returns all courses with optional pagination and filtering.
+        Supports:
+        - Exact match filtering by `Name`
+        - Partial search via `SearchQuery`
+        - Filtering by `StartDate` and `EndDate`
+        - Pagination metadata in the `X-Pagination` response header (TotalCount, CurrentPage, PageSize, TotalPages, HasNext, HasPrevious)")]
+
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<CourseDto>))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+
+    public async Task<ActionResult<IEnumerable<CourseDto>>> GetCoursesPagedAsync([FromQuery] CourseParameters parameters)
+    {
+        try
+        {
+            var courses = await serviceManager.CourseService.GetCoursesPagedAsync(parameters);
+            var paginationMetadata = new { courses.TotalCount, courses.CurrentPage, courses.PageSize, courses.TotalPages, courses.HasNext, courses.HasPrevious };
+
+            Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(paginationMetadata));
+            Response.Headers.Add("Access-Control-Expose-Headers", "X-Pagination");
+
+
+            return Ok(courses);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "An unexpected error occurred.", detail = ex.Message });
+        }
+    }
 }
+
